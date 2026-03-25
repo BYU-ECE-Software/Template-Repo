@@ -1,2 +1,2 @@
 # Project-Template
-Template Repository for most of our projects containing good components and helper libraries to make things go faster. ECE software boilerplate if you will
+Let's GO it's the template repo everything is going to work so smoothly and there will be no problems ever again!!
