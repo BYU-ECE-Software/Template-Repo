@@ -1,6 +1,14 @@
 import { betterAuth } from "better-auth";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { jwt as jwtPlugin } from "better-auth/plugins/jwt";
+import { env } from "@/lib/env";
+import type { User, Session } from "better-auth";
+
+type ExtendedUser = User & {
+    isAdmin: boolean;
+    byuId: string;
+};
+
 
 export const auth = betterAuth({
     session: {
@@ -26,7 +34,7 @@ export const auth = betterAuth({
             jwt: {
                 expirationTime: 1 * 24 * 60 * 60, // 1 day
             },
-            generatePayload: async ({ user, session }) => {
+            generatePayload: async ({ user, session }: { user: ExtendedUser; session: Session }) => {
                 // Call GRO here at token generation time
                 // const adminFlags = await fetchGroAdminFlags(user.email);
 
@@ -37,10 +45,10 @@ export const auth = betterAuth({
                     name: user.name,
 
                     // Custom claims from ID token (mapped via genericOAuth)
-                    preferredUsername: user.preferredUsername,
-                    groups: user.groups,
-                    given_name: user.given_name,
-                    family_name: user.family_name,
+                    // preferredUsername: user.preferredUsername,
+                    // groups: user.groups,
+                    // given_name: user.given_name,
+                    // family_name: user.family_name,
                     byu_id: user.byu_id,
 
                     // GRO-derived claims
@@ -53,10 +61,10 @@ export const auth = betterAuth({
             config: [ 
                 {
                     providerId: "okta",
-                    clientId: process.env.OKTA_CLIENT_ID,
-                    clientSecret: process.env.OKTA_CLIENT_SECRET,
-                    discoveryUrl: process.env.OKTA_DISCOVERY_URL,
-                    redirectURI: process.env.OKTA_REDIRECT_URI,
+                    clientId: env.OKTA_CLIENT_ID,
+                    clientSecret: env.OKTA_CLIENT_SECRET,
+                    discoveryUrl: env.OKTA_DISCOVERY_URL,
+                    redirectURI: env.OKTA_REDIRECT_URI,
                     pkce: true,
                     scopes: ["openid", "profile", "email"],
                     mapProfileToUser: async (profile) => {
