@@ -19,9 +19,17 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV DATABASE_URL=$DATABASE_URL
 RUN npx prisma generate --no-engine
 RUN npm run build
 
+# Migration stage — has schema, CLI, and migrations folder
+FROM base AS migrator
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY prisma ./prisma
+# prisma CLI lives in node_modules/.bin, schema and migrations are in ./prisma
 
 # Production image, copy all the files and run next
 FROM base AS runner
