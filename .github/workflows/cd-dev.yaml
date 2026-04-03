@@ -52,8 +52,8 @@ jobs:
           tags: |
             ghcr.io/byu-ece-software/template-repo-dev:latest
             ghcr.io/byu-ece-software/template-repo-dev:${{ steps.meta.outputs.sha_tag }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=app
+          cache-to: type=gha,mode=max,scope=app
 
       - name: Build and push migrator image
         uses: docker/build-push-action@v5
@@ -64,8 +64,8 @@ jobs:
           tags: |
             ghcr.io/byu-ece-software/template-repo-dev-migrator:latest
             ghcr.io/byu-ece-software/template-repo-dev-migrator:${{ steps.meta.outputs.sha_tag }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=migrator
+          cache-to: type=gha,mode=max,scope=migrator
 
       - name: Build and push nginx image
         uses: docker/build-push-action@v5
@@ -75,8 +75,8 @@ jobs:
           tags: |
             ghcr.io/byu-ece-software/template-repo-dev-nginx:latest
             ghcr.io/byu-ece-software/template-repo-dev-nginx:${{ steps.meta.outputs.sha_tag }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=nginx
+          cache-to: type=gha,mode=max,scope=nginx
 
   deploy:
     name: Deploy
@@ -101,30 +101,30 @@ jobs:
 
             # 1. Pull new images
             echo "Pulling images (tag: $IMAGE_TAG)..."
-            docker compose -f docker-compose.test.yaml -p template-repo pull
+            docker compose -f docker-compose.test.yaml pull
 
             # 2a. Ensure db is up and healthy before backing up
             echo "Starting database..."
-            docker compose -f docker-compose.test.yaml -p template-repo up -d db
+            docker compose -f docker-compose.test.yaml up -d db
             echo "Waiting for database to be ready..."
-            docker compose -f docker-compose.test.yaml -p template-repo wait db
+            docker compose -f docker-compose.test.yaml wait db
 
             # 2. Database backup
             echo "Backing up database..."
             mkdir -p ~/backups/template-repo
-            docker compose -f docker-compose.test.yaml -p template-repo exec -T db \
+            docker compose -f docker-compose.test.yaml exec -T db \
               sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' \
               > ~/backups/db-backup-$(date +%Y%m%d-%H%M%S).sql
             echo "Backup complete."
 
             # 3. Run migrations
             echo "Running migrations..."
-            docker compose -f docker-compose.test.yaml -p template-repo \
+            docker compose -f docker-compose.test.yaml \
               up --no-build --exit-code-from migrate migrate
 
             # 4. Deploy new app
             echo "Deploying app..."
-            docker compose -f docker-compose.test.yaml -p template-repo \
+            docker compose -f docker-compose.test.yaml \
               up -d --remove-orphans
 
             # 5. Cleanup
