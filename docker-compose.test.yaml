@@ -1,3 +1,5 @@
+name: template-repo
+
 services:
   app:
     image: ghcr.io/BYU-ECE-Software/template-repo-dev:latest
@@ -23,7 +25,7 @@ services:
       - traefik.http.services.template-repo-api.loadbalancer.server.port=3000
 
   nginx:
-    image: ghcr.io/BYU-ECE-Software/template-repo-nginx:latest
+    image: ghcr.io/BYU-ECE-Software/template-repo-dev-nginx:latest
     container_name: template_repo_nginx
     depends_on:
       app:
