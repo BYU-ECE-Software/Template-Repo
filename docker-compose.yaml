@@ -3,7 +3,7 @@ services:
     build:
       context: .
       target: runner
-    container_name: epicenter_app
+    container_name: template_repo_app
     env_file:
       - .env
     depends_on:
@@ -19,13 +19,13 @@ services:
       start_period: 40s
     restart: unless-stopped
     networks:
-      - epicenter_network
+      - template_repo_network
 
   nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile
-    container_name: epicenter_nginx
+    container_name: template_repo_nginx
     depends_on:
       app:
         condition: service_started
@@ -40,11 +40,11 @@ services:
       - "80:80"
       - "443:443"
     networks:
-      - epicenter_network
+      - template_repo_network
 
   db:
     image: postgres:16
-    container_name: epicenter_db
+    container_name: template_repo_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -62,11 +62,11 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - epicenter_network
+      - template_repo_network
 
   minio:
     image: minio/minio
-    container_name: epicenter_minio
+    container_name: template_repo_minio
     restart: unless-stopped
     ports:
       - "9000:9000"
@@ -78,7 +78,7 @@ services:
       - minio_data:/data
     command: server /data --console-address ":9001"
     networks:
-      - epicenter_network
+      - template_repo_network
 
   createbuckets:
     image: minio/mc
@@ -107,10 +107,10 @@ services:
       exit 0;
       "
     networks:
-      - epicenter_network
+      - template_repo_network
 
 networks:
-  epicenter_network:
+  template_repo_network:
     driver: bridge
 
 volumes:

@@ -15,13 +15,14 @@
       "files": ["*.yml", "*.yaml", "docker-compose*.yml"],
       "options": {
         "singleQuote": false,
-        "proseWrap": "preserve"
+        "proseWrap": "preserve",
+        "tabWidth": 2
       }
     },
     {
       "files": ["Dockerfile*"],
       "options": {
-        "printWidth": 80
+        "printWidth": 100
       }
     }
   ]
