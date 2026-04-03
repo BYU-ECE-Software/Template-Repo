@@ -103,6 +103,12 @@ jobs:
             echo "Pulling images (tag: $IMAGE_TAG)..."
             docker compose -f docker-compose.test.yaml -p template-repo pull
 
+            # 2a. Ensure db is up and healthy before backing up
+            echo "Starting database..."
+            docker compose -f docker-compose.test.yaml -p template-repo up -d db
+            echo "Waiting for database to be ready..."
+            docker compose -f docker-compose.test.yaml -p template-repo wait db
+
             # 2. Database backup
             echo "Backing up database..."
             mkdir -p ~/backups/template-repo
