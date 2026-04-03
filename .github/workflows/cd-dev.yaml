@@ -107,7 +107,7 @@ jobs:
             echo "Backing up database..."
             mkdir -p ~/backups/template-repo
             docker compose -f docker-compose.test.yaml -p template-repo exec -T db \
-              pg_dump -U $POSTGRES_USER $POSTGRES_DB \
+              sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' \
               > ~/backups/db-backup-$(date +%Y%m%d-%H%M%S).sql
             echo "Backup complete."
 
