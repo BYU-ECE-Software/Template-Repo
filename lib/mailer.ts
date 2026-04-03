@@ -1,5 +1,6 @@
 // src/mailer.ts
-import nodemailer, { Transporter, SendMailOptions, SentMessageInfo } from 'nodemailer';
+import nodemailer from 'nodemailer';
+import type { Transporter, SendMailOptions, SentMessageInfo } from 'nodemailer'
 
 const transporter: Transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,

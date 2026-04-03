@@ -1,7 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { genericOAuth } from 'better-auth/plugins/generic-oauth';
 import { jwt as jwtPlugin } from 'better-auth/plugins/jwt';
-import { env } from '@/lib/env';
 import type { User, Session } from 'better-auth';
 
 type ExtendedUser = User & {
