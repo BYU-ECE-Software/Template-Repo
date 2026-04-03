@@ -116,7 +116,7 @@ services:
     command: npx prisma migrate deploy
     environment:
       DATABASE_URL: ${DATABASE_URL}
-    restart: "no"             # run once and exit
+    restart: "no" # run once and exit
     depends_on:
       db:
         condition: service_healthy

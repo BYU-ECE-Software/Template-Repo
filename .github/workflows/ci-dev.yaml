@@ -2,11 +2,11 @@ name: CI-dev
 
 on:
   push:
-    branches: 
-        - "dev"
+    branches:
+      - "dev"
   pull_request:
-    branches: 
-        - "dev"
+    branches:
+      - "dev"
 
 jobs:
   quality:
@@ -31,6 +31,9 @@ jobs:
 
       - name: Lint
         run: npx eslint .
+
+      - name: Format
+        run: npx prettier --write .
 
       - name: Format check
         run: npx prettier --check .
