@@ -38,8 +38,5 @@ jobs:
       - name: Format check
         run: npx prettier --check .
 
-      - name: Generate Prisma client
-        run: npx prisma generate
-
       - name: Run tests
         run: npx vitest run
