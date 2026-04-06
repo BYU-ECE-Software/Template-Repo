@@ -97,6 +97,8 @@ jobs:
             set -euo pipefail # Exit on Error, unset vars, or failed pipes
             cd ~/Template-Repo
 
+            git switch dev
+
             IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
 
             # 1. Pull new images
