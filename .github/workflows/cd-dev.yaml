@@ -102,6 +102,10 @@ jobs:
           script_stop: true
           script: |
             set -euo pipefail # Exit on Error, unset vars, or failed pipes
+
+            echo '${{ secrets.GITHUB_TOKEN }}' | \
+            docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
             cd ~/Template-Repo
 
             git switch dev
