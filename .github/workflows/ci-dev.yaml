@@ -38,5 +38,5 @@ jobs:
       - name: Format check
         run: npx prettier --check .
 
-      - name: Run tests
+      - name: Run tests # run tests
         run: npx vitest run
