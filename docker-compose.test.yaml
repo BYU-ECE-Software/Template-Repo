@@ -22,6 +22,7 @@ services:
       - traefik.http.routers.template-repo-api.rule=Host(`template.ecesoftwaretesting.byu.edu`) && PathPrefix(`/api`)
       - traefik.http.routers.template-repo-api.entrypoints=websecure
       - traefik.http.routers.template-repo-api.tls=true
+      - traefik.http.routers.template-repo.api.service=template-repo-api
       - traefik.http.services.template-repo-api.loadbalancer.server.port=3000
 
   nginx:
@@ -41,6 +42,7 @@ services:
       - traefik.http.routers.template-repo.rule=Host(`template.ecesoftwaretesting.byu.edu`)
       - traefik.http.routers.template-repo.entrypoints=websecure
       - traefik.http.routers.template-repo.tls=true
+      - traefik.http.routers.template-repo.service=template-repo
       - traefik.http.services.template-repo.loadbalancer.server.port=80
       # If your frontend needs bigger uploads:
       # - traefik.http.middlewares.site1-buffer.buffering.maxRequestBodyBytes=104857600
