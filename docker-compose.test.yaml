@@ -22,7 +22,7 @@ services:
       - traefik.http.routers.template-repo-api.rule=Host(`template.ecesoftwaretesting.byu.edu`) && PathPrefix(`/api`)
       - traefik.http.routers.template-repo-api.entrypoints=websecure
       - traefik.http.routers.template-repo-api.tls=true
-      - traefik.http.routers.template-repo.api.service=template-repo-api
+      - traefik.http.routers.template-repo-api.service=template-repo-api
       - traefik.http.services.template-repo-api.loadbalancer.server.port=3000
 
   nginx:
