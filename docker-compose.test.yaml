@@ -35,7 +35,7 @@ services:
       - "80"
     networks:
       - template_repo_network
-      - proxy
+      # - proxy
     labels:
       - traefik.enable=true
       - traefik.http.routers.template-repo.rule=Host(`template.ecesoftwaretesting.byu.edu`)
