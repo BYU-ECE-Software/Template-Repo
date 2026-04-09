@@ -1,9 +1,9 @@
+name: template-repo
+
 services:
   app:
-    build:
-      context: .
-      target: runner
-    container_name: epicenter_app
+    image: ghcr.io/byu-ece-software/template-repo-dev:latest
+    container_name: template_repo_app
     env_file:
       - .env
     depends_on:
@@ -11,56 +11,46 @@ services:
         condition: service_healthy
       createbuckets:
         condition: service_completed_successfully
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/health >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      migrate:
+        condition: service_completed_successfully
     restart: unless-stopped
     networks:
-      - epicenter_network
+      - template_repo_network
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.epicenter-api.rule=Host(`epicenter.ecesoftwaretesting.byu.edu`) && PathPrefix(`/api`)
-      - traefik.http.routers.epicenter-api.entrypoints=websecure
-      - traefik.http.routers.epicenter-api.tls=true
-      - traefik.http.services.epicenter-api.loadbalancer.server.port=3000
+      - traefik.http.routers.template-repo-api.rule=Host(`template.ecesoftwaretesting.byu.edu`) && PathPrefix(`/api`)
+      - traefik.http.routers.template-repo-api.entrypoints=websecure
+      - traefik.http.routers.template-repo-api.tls=true
+      - traefik.http.routers.template-repo-api.service=template-repo-api
+      - traefik.http.services.template-repo-api.loadbalancer.server.port=3000
 
   nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile.test
-    container_name: epicenter_nginx
+    image: ghcr.io/byu-ece-software/template-repo-dev-nginx:latest
+    container_name: template_repo_nginx
     depends_on:
       app:
         condition: service_started
     restart: unless-stopped
-    # healthcheck:
-    #   test: ["CMD-SHELL", "wget -qO- http://localhost/health | grep -q OK"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 12
-    #   start_period: 40s
     expose:
       - "80"
     networks:
-      - epicenter_network
+      - template_repo_network
       - proxy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.epicenter.rule=Host(`epicenter.ecesoftwaretesting.byu.edu`)
-      - traefik.http.routers.epicenter.entrypoints=websecure
-      - traefik.http.routers.epicenter.tls=true
-      - traefik.http.services.epicenter.loadbalancer.server.port=80
+      - traefik.http.routers.template-repo.rule=Host(`template.ecesoftwaretesting.byu.edu`)
+      - traefik.http.routers.template-repo.entrypoints=websecure
+      - traefik.http.routers.template-repo.tls=true
+      - traefik.http.routers.template-repo.service=template-repo
+      - traefik.http.services.template-repo.loadbalancer.server.port=80
       # If your frontend needs bigger uploads:
       # - traefik.http.middlewares.site1-buffer.buffering.maxRequestBodyBytes=104857600
       # - traefik.http.routers.site1.middlewares=site1-buffer
 
   db:
     image: postgres:16
-    container_name: epicenter_db
+    container_name: template_repo_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -78,14 +68,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - epicenter_network
+      - template_repo_network
 
   minio:
     image: minio/minio
-    container_name: epicenter_minio
+    container_name: template_repo_minio
     restart: unless-stopped
     expose:
-      - "9000"
+      # - "9000"
       - "9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
@@ -94,7 +84,7 @@ services:
       - minio_data:/data
     command: server /data --console-address ":9001"
     networks:
-      - epicenter_network
+      - template_repo_network
 
   createbuckets:
     image: minio/mc
@@ -123,10 +113,22 @@ services:
       exit 0;
       "
     networks:
-      - epicenter_network
+      - template_repo_network
+
+  migrate:
+    image: ghcr.io/byu-ece-software/template-repo-dev-migrator:latest
+    command: npx prisma migrate deploy
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    restart: "no" # run once and exit
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - template_repo_network
 
 networks:
-  epicenter_network:
+  template_repo_network:
     driver: bridge
   proxy:
     external: true

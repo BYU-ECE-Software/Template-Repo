@@ -19,9 +19,17 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx prisma generate
+ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV DATABASE_URL=$DATABASE_URL
+RUN npx prisma generate --no-engine
 RUN npm run build
 
+# Migration stage — has schema, CLI, and migrations folder
+FROM base AS migrator
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY prisma ./prisma
+# prisma CLI lives in node_modules/.bin, schema and migrations are in ./prisma
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -47,10 +55,6 @@ COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/clie
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
-# set hostname to localhost
 ENV HOSTNAME="0.0.0.0"
-
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
 
 CMD ["node", "server.js"]

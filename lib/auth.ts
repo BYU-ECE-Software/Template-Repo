@@ -1,7 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { genericOAuth } from 'better-auth/plugins/generic-oauth';
 import { jwt as jwtPlugin } from 'better-auth/plugins/jwt';
-import { env } from '@/lib/env';
 import type { User, Session } from 'better-auth';
 
 type ExtendedUser = User & {
@@ -60,10 +59,10 @@ export const auth = betterAuth({
       config: [
         {
           providerId: 'okta',
-          clientId: env.OKTA_CLIENT_ID,
-          clientSecret: env.OKTA_CLIENT_SECRET,
-          discoveryUrl: env.OKTA_DISCOVERY_URL,
-          redirectURI: env.OKTA_REDIRECT_URI,
+          clientId: process.env.OKTA_CLIENT_ID!,
+          clientSecret: process.env.OKTA_CLIENT_SECRET,
+          discoveryUrl: process.env.OKTA_DISCOVERY_URL,
+          redirectURI: process.env.OKTA_REDIRECT_URI,
           pkce: true,
           scopes: ['openid', 'profile', 'email'],
           mapProfileToUser: async (profile) => {

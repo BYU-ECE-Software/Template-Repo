@@ -6,22 +6,22 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-      rules: {
-        // Custom rules can be added here.
+    rules: {
+      // Custom rules can be added here.
       // TypeScript
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
 
       // React
-      "react/self-closing-comp": "error",
-      "react/jsx-curly-brace-presence": ["error", { props: "never", children: "never" }],
+      'react/self-closing-comp': 'error',
+      'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
 
       // General
-      "no-console": ["warn", { allow: ["warn", "error"] }],
-      "prefer-const": "error",
-      "no-var": "error",
-      }
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prefer-const': 'error',
+      'no-var': 'error',
+    },
   },
   // Override default ignores of eslint-config-next.
   globalIgnores([
