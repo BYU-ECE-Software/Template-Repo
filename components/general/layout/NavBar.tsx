@@ -134,6 +134,17 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                   >
                     Full Page Form
                   </Link>
+
+                  <Link
+                    href="/modals"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Modals
+                  </Link>
                 </div>
               )}
             </div>
@@ -207,6 +218,14 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                   className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
                 >
                   Full Page Form
+                </Link>
+
+                <Link
+                  href="/modals"
+                  onClick={() => setComponentsOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Modals
                 </Link>
               </div>
             )}

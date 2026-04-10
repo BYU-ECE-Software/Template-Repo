@@ -22,14 +22,14 @@ const STAR_POSITIONS = [
   [65, 40],
   [88, 18],
   [35, 72],
-  [50, 50],
+  [33, 50],
 ];
 
 const STAR_COLORS = ['#818cf8', '#a78bfa', '#fbbf24', '#c7d2fe', '#6d28d9'];
 
 export default function ComingSoonPage({ pageName }: ComingSoonPageProps) {
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-linear-to-br from-violet-100 via-indigo-50 to-purple-100 px-4 pb-10">
+    <div className="relative flex min-h-[calc(100vh-96px)] flex-col items-center justify-center overflow-hidden bg-linear-to-br from-violet-100 via-indigo-50 to-purple-100 px-4 py-10">
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
@@ -140,6 +140,6 @@ export default function ComingSoonPage({ pageName }: ComingSoonPageProps) {
       <p className="mt-6 text-center text-xs text-indigo-600/70">
         (In the meantime, feel free to explore the other pages that are already live.)
       </p>
-    </main>
+    </div>
   );
 }

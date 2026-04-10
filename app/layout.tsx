@@ -29,10 +29,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
         <link rel="icon" href="/BYU_Block_Y_white.svg" type="image/svg+xml" />
       </head>
-      <body>
+      <body className="flex min-h-screen flex-col">
         <Providers initialRole={initialRole} initialAuth={initialAuth}>
           <Header />
-          <div className="w-full">{children}</div>
+          <main className="flex-1">{children}</main>
           <Footer />
         </Providers>
       </body>
