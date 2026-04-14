@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import FullPageForm, { type FullPageFormSection } from '@/components/general/forms/FullPageForm';
 import PageTitle from '@/components/general/layout/PageTitle';
+import BaseModal from '@/components/general/overlays/BaseModal';
 
 //This type holds the main form values. Each field type is included once.
 type ExampleFormValues = {
@@ -47,6 +48,9 @@ export default function ExampleFullPageFormDemo() {
     examplePrice: '',
   });
 
+  // State for the submit confirmation modal
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   //Repeater state. Start with one example item.
   const [items, setItems] = useState<ExampleItem[]>([createEmptyItem()]);
 
@@ -69,14 +73,6 @@ export default function ExampleFullPageFormDemo() {
     setItems((prev) =>
       prev.map((item, itemIndex) => (itemIndex === index ? { ...item, [key]: value } : item)),
     );
-  };
-
-  //This sample submit just logs the data. Real validation can be added later.
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    console.log('Example form values:', values);
-    console.log('Example repeater items:', items);
   };
 
   //These sections tell FullPageForm what to render. This page includes every current field type once.
@@ -146,6 +142,67 @@ export default function ExampleFullPageFormDemo() {
           helperText: 'Only numbers are allowed.',
         },
         {
+          key: 'exampleSummaryCard',
+          kind: 'custom',
+          colSpan: 2,
+          render: () => {
+            const displayName = values.exampleText || 'No text';
+            const displayEmail = values.exampleEmail || 'no-email@example.com';
+            const selectedPlan =
+              values.exampleSelect === 'option-1'
+                ? 'Option One'
+                : values.exampleSelect === 'option-2'
+                  ? 'Option Two'
+                  : values.exampleSelect === 'option-3'
+                    ? 'Option Three'
+                    : 'No option selected';
+
+            const totalItems = items.reduce((sum, item) => {
+              return sum + (typeof item.itemQuantity === 'number' ? item.itemQuantity : 0);
+            }, 0);
+
+            return (
+              <div className="border-byu-royal/20 mb-6 rounded-xl border bg-linear-to-r from-blue-50 to-white p-4 shadow-sm">
+                <div className="mb-2 flex items-center justify-between">
+                  <h3 className="text-byu-navy text-lg font-semibold">Custom Field</h3>
+                  <span className="bg-byu-royal rounded-full px-3 py-1 text-xs font-medium text-white">
+                    Live Preview Card
+                  </span>
+                </div>
+
+                <p className="text-sm text-gray-600">
+                  This is a custom-rendered block inside the form. You can do anything you want with
+                  a custom field. I chose to make this custom block update live as the user types.
+                </p>
+
+                <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <div className="rounded-lg border border-gray-200 bg-white p-3">
+                    <p className="text-xs tracking-wide text-gray-500 uppercase">Text Input</p>
+                    <p className="text-byu-navy text-sm font-medium">{displayName}</p>
+                  </div>
+
+                  <div className="rounded-lg border border-gray-200 bg-white p-3">
+                    <p className="text-xs tracking-wide text-gray-500 uppercase">Email Input</p>
+                    <p className="text-byu-navy text-sm font-medium">{displayEmail}</p>
+                  </div>
+
+                  <div className="rounded-lg border border-gray-200 bg-white p-3">
+                    <p className="text-xs tracking-wide text-gray-500 uppercase">Selected Option</p>
+                    <p className="text-byu-navy text-sm font-medium">{selectedPlan}</p>
+                  </div>
+
+                  <div className="rounded-lg border border-gray-200 bg-white p-3">
+                    <p className="text-xs tracking-wide text-gray-500 uppercase">
+                      Total Item Quantity
+                    </p>
+                    <p className="text-byu-navy text-sm font-medium">{totalItems}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
           key: 'exampleRadio',
           label: 'Radio Input',
           kind: 'radio',
@@ -213,16 +270,36 @@ export default function ExampleFullPageFormDemo() {
   return (
     <>
       <PageTitle title="SAMPLE FULL PAGE FORM" />
-      {/*// Render the Form*/}
+      {/* Render the Form */}
       <FullPageForm
         title="Form Title"
         intro="This sample page shows how to use the reusable FullPageForm component. Every currently supported field type is used."
         values={values}
         setValues={setValues}
         sections={sections}
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          e.preventDefault(); // prevents the browser from doing a full form submission because this is a template. when there is real form submission, that logic goes here
+
+          console.log('Example form values:', values);
+          console.log('Example repeater items:', items);
+          setShowSuccessModal(true);
+        }}
         submitLabel="Submit Example Form"
       />
+
+      {/* Use the modal template you want for a form success pop up */}
+      <BaseModal
+        open={showSuccessModal}
+        title="Form Submitted"
+        onClose={() => setShowSuccessModal(false)}
+      >
+        <div className="space-y-3 py-2">
+          <p className="text-gray-700">
+            Your form was submitted successfully. In a real form, this is where you'd handle saving
+            to the database, redirecting the user, or showing a confirmation message.
+          </p>
+        </div>
+      </BaseModal>
     </>
   );
 }

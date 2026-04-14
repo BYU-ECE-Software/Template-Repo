@@ -3,70 +3,22 @@
 import { useState, type ReactNode } from 'react';
 import BaseModal from '@/components/general/overlays/BaseModal';
 import FilePicker from '@/components/general/forms/FilePicker';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import FieldWrapper from '@/components/general/forms/FieldWrapper';
+import SelectField from '@/components/general/forms/SelectField';
+import RadioGroupField from '@/components/general/forms/RadioGroupField';
+import TextLikeField from '@/components/general/forms/TextLikeField';
+import PinField from '@/components/general/forms/PinField';
+import type {
+  CustomField,
+  InputField,
+  RadioField,
+  SelectField as SelectFieldType,
+} from '@/components/general/forms/formFieldTypes';
 
 // Modal sizing options passed straight through to BaseModal
 type ModalSize = 'sm' | 'md' | 'lg';
 
-// Supported built-in input types
-type FieldType = 'text' | 'email' | 'number' | 'date' | 'textarea' | 'pin' | 'file';
-
-// Optional adornment (prefix/suffix)
-type Adornment = {
-  text: string;
-  position: 'start' | 'end';
-};
-
-// Shared properties for all non-custom fields
-type BaseField = {
-  key: string;
-  label: string;
-  helperText?: string;
-  required?: boolean;
-  placeholder?: string;
-  colSpan?: 1 | 2;
-  adornment?: Adornment;
-};
-
-// Standard input-based field definition
-type InputField = BaseField & {
-  kind?: 'input';
-  type?: FieldType; // default "text"
-  accept?: string;
-};
-
-// Select field definition (dropdown)
-type SelectOption = {
-  label: string;
-  value: string;
-};
-
-type SelectField = BaseField & {
-  kind: 'select';
-  options: SelectOption[];
-};
-
-// Radio Button Field
-type RadioOption = {
-  label: string;
-  value: string | number | boolean;
-};
-
-type RadioField = BaseField & {
-  kind: 'radio';
-  options: RadioOption[];
-};
-
-// Custom field definition for complex layouts (file pickers, previews, etc.)
-type CustomField = {
-  kind: 'custom';
-  key: string;
-  colSpan?: 1 | 2;
-  render: () => ReactNode;
-};
-
-// Union of all supported field types
-export type FormModalField = InputField | SelectField | RadioField | CustomField;
+export type FormModalField = InputField | SelectFieldType | RadioField | CustomField;
 
 // Props for the FormModal component
 type FormModalProps<T extends Record<string, any>> = {
@@ -84,15 +36,8 @@ type FormModalProps<T extends Record<string, any>> = {
 
   fields: FormModalField[];
 
-  errors?: Partial<Record<keyof T, string>>;
+  errors?: Partial<Record<keyof T, string>>; // key matches the field key, value is the error message
 };
-
-// Centralized Styling
-const LABEL_CLASS = 'block text-sm font-medium text-byu-navy mb-1';
-const INPUT_CLASS =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm ' +
-  'focus:outline-none focus:ring-1 focus:ring-byu-royal focus:border-byu-royal';
-const ERROR_CLASS = 'mt-1 text-xs text-red-600';
 
 export default function FormModal<T extends Record<string, any>>({
   open,
@@ -116,7 +61,6 @@ export default function FormModal<T extends Record<string, any>>({
   const [pinVisible, setPinVisible] = useState<Record<string, boolean>>({});
   const isPinVisible = (key: string) => Boolean(pinVisible[key]);
   const togglePinVisible = (key: string) => setPinVisible((p) => ({ ...p, [key]: !p[key] }));
-  const sanitizePin = (raw: string) => raw.replace(/\D/g, '');
 
   return (
     <BaseModal
@@ -129,7 +73,8 @@ export default function FormModal<T extends Record<string, any>>({
       saveLabel={saveLabel}
       submitDisabled={submitDisabled}
     >
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {/* Fields are laid out in a 2-column grid, matching FullPageForm's layout */}
+      <div className="grid auto-rows-[auto_auto_auto] grid-cols-1 gap-x-4 md:grid-cols-2">
         {fields.map((field) => {
           const colSpan = field.colSpan ?? 1;
           const colClass = colSpan === 2 ? 'md:col-span-2' : '';
@@ -145,114 +90,49 @@ export default function FormModal<T extends Record<string, any>>({
           const value = values[field.key] ?? '';
           const errorText = errors?.[field.key as keyof T];
 
-          const hasAdornment = Boolean(field.adornment?.text);
-          const adornPos = field.adornment?.position ?? 'start';
-
-          const inputPaddingClass = hasAdornment
-            ? adornPos === 'start'
-              ? 'pl-7 pr-3'
-              : 'pl-3 pr-7'
-            : 'px-3';
-
-          const fieldClass = [
-            'w-full rounded-md border border-gray-300 py-2 text-sm',
-            inputPaddingClass,
-            'focus:outline-none focus:ring-1 focus:ring-byu-royal focus:border-byu-royal',
-          ].join(' ');
-
+          // Renders the correct input component based on the field's kind and type
           return (
-            <div key={field.key} className={colClass}>
-              <label className="mb-1 flex items-baseline gap-2">
-                <span className={LABEL_CLASS}>
-                  {field.label} {field.required ? '*' : null}
-                </span>
-
-                {field.helperText ? (
-                  <span className="block text-left text-xs font-normal text-gray-500">
-                    {field.helperText}
-                  </span>
-                ) : null}
-              </label>
-
+            <FieldWrapper
+              key={field.key}
+              className={colClass}
+              label={field.label}
+              required={field.required}
+              helperText={field.helperText}
+              error={errorText}
+            >
               {field.kind === 'select' ? (
-                <select
-                  className={INPUT_CLASS}
+                <SelectField
                   value={value}
-                  onChange={(e) => setFieldValue(field.key, e.target.value)}
-                >
-                  {field.placeholder ? (
-                    <option value="" disabled>
-                      {field.placeholder}
-                    </option>
-                  ) : null}
-
-                  {field.options.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(nextValue) => setFieldValue(field.key, nextValue)}
+                  options={field.options}
+                  placeholder={field.placeholder}
+                />
               ) : field.kind === 'radio' ? (
-                <div className="space-y-2">
-                  {field.options.map((opt) => (
-                    <label key={String(opt.value)} className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name={field.key}
-                        checked={value === opt.value}
-                        onChange={() => setFieldValue(field.key, opt.value)}
-                      />
-                      <span className="text-byu-navy text-sm">{opt.label}</span>
-                    </label>
-                  ))}
-                </div>
+                <RadioGroupField
+                  name={field.key}
+                  value={value}
+                  onChange={(nextValue) => setFieldValue(field.key, nextValue)}
+                  options={field.options}
+                />
               ) : field.type === 'textarea' ? (
-                <div className={hasAdornment ? 'relative' : undefined}>
-                  {hasAdornment ? (
-                    <span
-                      className={[
-                        'pointer-events-none absolute top-3 text-sm text-gray-500',
-                        adornPos === 'start' ? 'left-3' : 'right-3',
-                      ].join(' ')}
-                    >
-                      {field.adornment!.text}
-                    </span>
-                  ) : null}
-
-                  <textarea
-                    rows={3}
-                    className={fieldClass}
-                    placeholder={field.placeholder ?? ''}
-                    value={value}
-                    onChange={(e) => setFieldValue(field.key, e.target.value)}
-                  />
-                </div>
+                <TextLikeField
+                  as="textarea"
+                  rows={3}
+                  value={value}
+                  onChange={(nextValue) => setFieldValue(field.key, nextValue)}
+                  placeholder={field.placeholder}
+                  adornment={field.adornment}
+                  includeTextColor={false}
+                />
               ) : field.type === 'pin' ? (
-                <div className="relative">
-                  <input
-                    type={isPinVisible(field.key) ? 'text' : 'password'}
-                    className={INPUT_CLASS + ' pr-10'}
-                    placeholder={field.placeholder ?? ''}
-                    value={value}
-                    onChange={(e) => setFieldValue(field.key, sanitizePin(e.target.value))}
-                    inputMode="numeric"
-                    autoComplete="one-time-code"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => togglePinVisible(field.key)}
-                    className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 text-gray-500 hover:text-gray-700"
-                    aria-label={isPinVisible(field.key) ? 'Hide PIN' : 'Show PIN'}
-                    title={isPinVisible(field.key) ? 'Hide' : 'Show'}
-                  >
-                    {isPinVisible(field.key) ? (
-                      <FiEyeOff className="h-4 w-4" />
-                    ) : (
-                      <FiEye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
+                <PinField
+                  value={value}
+                  onChange={(nextValue) => setFieldValue(field.key, nextValue)}
+                  visible={isPinVisible(field.key)}
+                  onToggleVisible={() => togglePinVisible(field.key)}
+                  placeholder={field.placeholder}
+                  showTitle
+                />
               ) : field.type === 'file' ? (
                 <FilePicker
                   value={value}
@@ -260,31 +140,18 @@ export default function FormModal<T extends Record<string, any>>({
                   onChange={(file) => setFieldValue(field.key, file)}
                 />
               ) : (
-                <div className={hasAdornment ? 'relative' : undefined}>
-                  {hasAdornment ? (
-                    <span
-                      className={[
-                        'pointer-events-none absolute top-1/2 -translate-y-1/2 text-sm text-gray-500',
-                        adornPos === 'start' ? 'left-3' : 'right-3',
-                      ].join(' ')}
-                    >
-                      {field.adornment!.text}
-                    </span>
-                  ) : null}
-
-                  <input
-                    type={field.type ?? 'text'}
-                    className={hasAdornment ? fieldClass : INPUT_CLASS}
-                    placeholder={field.placeholder ?? ''}
-                    value={value}
-                    onChange={(e) => setFieldValue(field.key, e.target.value)}
-                    inputMode={(field.type ?? 'text') === 'number' ? 'decimal' : undefined}
-                  />
-                </div>
+                <TextLikeField
+                  as="input"
+                  type={field.type ?? 'text'}
+                  value={value}
+                  onChange={(nextValue) => setFieldValue(field.key, nextValue)}
+                  placeholder={field.placeholder}
+                  adornment={field.adornment}
+                  inputMode={(field.type ?? 'text') === 'number' ? 'decimal' : undefined}
+                  includeTextColor={false}
+                />
               )}
-
-              {errorText ? <p className={ERROR_CLASS}>{errorText}</p> : null}
-            </div>
+            </FieldWrapper>
           );
         })}
       </div>

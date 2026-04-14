@@ -1,72 +1,22 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { FiEye, FiEyeOff, FiTrash2 } from 'react-icons/fi';
+import { FiTrash2 } from 'react-icons/fi';
 import PrimaryButton from '@/components/general/actions/PrimaryButton';
 import FilePicker from '@/components/general/forms/FilePicker';
+import FieldWrapper from '@/components/general/forms/FieldWrapper';
+import SelectField from '@/components/general/forms/SelectField';
+import RadioGroupField from '@/components/general/forms/RadioGroupField';
+import TextLikeField from '@/components/general/forms/TextLikeField';
+import PinField from '@/components/general/forms/PinField';
+import type {
+  CustomField,
+  InputField,
+  RadioField,
+  SelectField as SelectFieldType,
+} from '@/components/general/forms/formFieldTypes';
 
-type FieldType = 'text' | 'email' | 'number' | 'date' | 'textarea' | 'file' | 'pin' | 'radio';
-
-type SelectOption = {
-  label: string;
-  value: string;
-};
-
-type RadioOption = {
-  label: string;
-  value: string | number | boolean;
-};
-
-type Adornment = {
-  text: string;
-  position: 'start' | 'end';
-};
-
-type BaseField = {
-  key: string;
-  label: string;
-  helperText?: string;
-  required?: boolean;
-  placeholder?: string;
-  colSpan?: 1 | 2;
-  adornment?: Adornment;
-};
-
-type InputField = BaseField & {
-  kind?: 'input';
-  type?: Exclude<FieldType, 'radio'>;
-  inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
-  accept?: string;
-};
-
-type SelectField = BaseField & {
-  kind: 'select';
-  options: SelectOption[];
-};
-
-type RadioField = BaseField & {
-  kind: 'radio';
-  options: RadioOption[];
-};
-
-type CustomField<TItem = any> = {
-  kind: 'custom';
-  key: string;
-  colSpan?: 1 | 2;
-  render: (args: {
-    value?: any;
-    setValue: (value: any) => void;
-    item?: TItem;
-    itemIndex?: number;
-  }) => ReactNode;
-};
-
-export type FullPageFormField<TItem = any> =
-  | InputField
-  | SelectField
-  | RadioField
-  | CustomField<TItem>;
-
+// A standard section renders a fixed list of fields
 type StandardSection<TValues> = {
   kind: 'section';
   key: string;
@@ -75,6 +25,7 @@ type StandardSection<TValues> = {
   fields: FullPageFormField<TValues>[];
 };
 
+// A repeater section lets users add/remove groups of the same fields
 type RepeaterSection<TItem> = {
   kind: 'repeater';
   key: string;
@@ -90,6 +41,12 @@ type RepeaterSection<TItem> = {
   emptyMessage?: string;
 };
 
+export type FullPageFormField<TItem = any> =
+  | InputField
+  | SelectFieldType
+  | RadioField
+  | CustomField<TItem>;
+
 export type FullPageFormSection<TValues, TRepeaterItem = any> =
   | StandardSection<TValues>
   | RepeaterSection<TRepeaterItem>;
@@ -100,18 +57,13 @@ type FullPageFormProps<TValues, TRepeaterItem = any> = {
   values: TValues;
   setValues: (next: TValues) => void;
   sections: FullPageFormSection<TValues, TRepeaterItem>[];
-  errors?: Record<string, string>;
+  errors?: Record<string, string>; // key matches the field key, value is the error message
   onSubmit: (e: React.FormEvent) => void;
   submitLabel?: string;
   submitting?: boolean;
-  maxWidthClass?: string;
+  maxWidthClass?: string; // controls the max width of the form, defaults to max-w-4xl
 };
 
-const LABEL_CLASS = 'block text-sm font-medium text-byu-navy mb-1';
-const INPUT_CLASS =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-byu-navy ' +
-  'focus:outline-none focus:ring-1 focus:ring-byu-royal focus:border-byu-royal';
-const ERROR_CLASS = 'mt-1 text-xs text-red-600';
 const SECTION_TITLE_CLASS = 'text-2xl font-semibold text-byu-navy';
 const SECTION_DESC_CLASS = 'text-sm text-gray-600 mt-1';
 const BOX_CLASS = 'border border-gray-300 rounded-md p-4 space-y-6 bg-white shadow-sm';
@@ -138,8 +90,7 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
   const togglePinVisible = (key: string) =>
     setPinVisible((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  const sanitizePin = (raw: string) => raw.replace(/\D/g, '');
-
+  // Renders the correct input component based on the field's kind and type
   const renderField = (
     field: FullPageFormField<any>,
     value: any,
@@ -164,147 +115,70 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
       );
     }
 
-    const hasAdornment = Boolean(field.adornment?.text);
-    const adornPos = field.adornment?.position ?? 'start';
-
-    const inputPaddingClass = hasAdornment
-      ? adornPos === 'start'
-        ? 'pl-7 pr-3'
-        : 'pl-3 pr-7'
-      : 'px-3';
-
-    const fieldClass = [
-      'w-full rounded-md border border-gray-300 py-2 text-sm text-byu-navy',
-      inputPaddingClass,
-      'focus:outline-none focus:ring-1 focus:ring-byu-royal focus:border-byu-royal',
-    ].join(' ');
-
     return (
-      <div key={field.key} className={colClass}>
-        <label className="mb-1 flex flex-wrap items-baseline gap-x-2">
-          <span className={LABEL_CLASS}>
-            {field.label} {field.required ? '*' : null}
-          </span>
-
-          {field.helperText ? (
-            <span className="text-xs font-normal text-gray-500">{field.helperText}</span>
-          ) : null}
-        </label>
-
+      <FieldWrapper
+        key={field.key}
+        className={colClass}
+        label={field.label}
+        required={field.required}
+        helperText={field.helperText}
+        error={errorText}
+      >
         {field.kind === 'select' ? (
-          <select
-            className={INPUT_CLASS}
+          <SelectField
             value={value ?? ''}
-            onChange={(e) => setValue(e.target.value)}
-          >
-            {field.placeholder ? (
-              <option value="" disabled>
-                {field.placeholder}
-              </option>
-            ) : null}
-
-            {field.options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+            onChange={(nextValue) => setValue(nextValue)}
+            options={field.options}
+            placeholder={field.placeholder}
+          />
         ) : field.kind === 'radio' ? (
-          <div className="space-y-2">
-            {field.options.map((opt) => (
-              <label key={String(opt.value)} className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name={`${field.key}-${itemIndex ?? 'main'}`}
-                  checked={value === opt.value}
-                  onChange={() => setValue(opt.value)}
-                />
-                <span className="text-byu-navy text-sm">{opt.label}</span>
-              </label>
-            ))}
-          </div>
+          <RadioGroupField
+            name={`${field.key}-${itemIndex ?? 'main'}`}
+            value={value}
+            onChange={(nextValue) => setValue(nextValue)}
+            options={field.options}
+          />
         ) : field.type === 'textarea' ? (
-          <div className={hasAdornment ? 'relative' : undefined}>
-            {hasAdornment ? (
-              <span
-                className={[
-                  'pointer-events-none absolute top-3 text-sm text-gray-500',
-                  adornPos === 'start' ? 'left-3' : 'right-3',
-                ].join(' ')}
-              >
-                {field.adornment!.text}
-              </span>
-            ) : null}
-
-            <textarea
-              rows={4}
-              className={fieldClass}
-              placeholder={field.placeholder ?? ''}
-              value={value ?? ''}
-              onChange={(e) => setValue(e.target.value)}
-            />
-          </div>
+          <TextLikeField
+            as="textarea"
+            rows={4}
+            value={value ?? ''}
+            onChange={(nextValue) => setValue(nextValue)}
+            placeholder={field.placeholder}
+            adornment={field.adornment}
+            includeTextColor
+          />
         ) : field.type === 'pin' ? (
-          <div className="relative">
-            <input
-              type={isPinVisible(field.key) ? 'text' : 'password'}
-              className={INPUT_CLASS + ' pr-10'}
-              placeholder={field.placeholder ?? ''}
-              value={value ?? ''}
-              onChange={(e) => setValue(sanitizePin(e.target.value))}
-              inputMode="numeric"
-              autoComplete="one-time-code"
-            />
-
-            <button
-              type="button"
-              onClick={() => togglePinVisible(field.key)}
-              className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 text-gray-500 hover:text-gray-700"
-              aria-label={isPinVisible(field.key) ? 'Hide PIN' : 'Show PIN'}
-            >
-              {isPinVisible(field.key) ? (
-                <FiEyeOff className="h-4 w-4" />
-              ) : (
-                <FiEye className="h-4 w-4" />
-              )}
-            </button>
-          </div>
+          <PinField
+            value={value ?? ''}
+            onChange={(nextValue) => setValue(nextValue)}
+            visible={isPinVisible(field.key)}
+            onToggleVisible={() => togglePinVisible(field.key)}
+            placeholder={field.placeholder}
+          />
         ) : field.type === 'file' ? (
           <FilePicker value={value} accept={field.accept} onChange={(file) => setValue(file)} />
         ) : (
-          <div className={hasAdornment ? 'relative' : undefined}>
-            {hasAdornment ? (
-              <span
-                className={[
-                  'pointer-events-none absolute top-1/2 -translate-y-1/2 text-sm text-gray-500',
-                  adornPos === 'start' ? 'left-3' : 'right-3',
-                ].join(' ')}
-              >
-                {field.adornment!.text}
-              </span>
-            ) : null}
-
-            <input
-              type={field.type ?? 'text'}
-              className={hasAdornment ? fieldClass : INPUT_CLASS}
-              placeholder={field.placeholder ?? ''}
-              value={value ?? ''}
-              onChange={(e) => {
-                if (field.type === 'number') {
-                  setValue(e.target.value === '' ? '' : Number(e.target.value));
-                } else {
-                  setValue(e.target.value);
-                }
-              }}
-              inputMode={
-                field.inputMode ?? ((field.type ?? 'text') === 'number' ? 'decimal' : undefined)
+          <TextLikeField
+            as="input"
+            type={field.type ?? 'text'}
+            value={value ?? ''}
+            onChange={(nextValue) => {
+              if (field.type === 'number') {
+                setValue(nextValue === '' ? '' : Number(nextValue));
+              } else {
+                setValue(nextValue);
               }
-            />
-          </div>
+            }}
+            placeholder={field.placeholder}
+            adornment={field.adornment}
+            inputMode={
+              field.inputMode ?? ((field.type ?? 'text') === 'number' ? 'decimal' : undefined)
+            }
+            includeTextColor
+          />
         )}
-
-        {errorText ? <p className={ERROR_CLASS}>{errorText}</p> : null}
-      </div>
+      </FieldWrapper>
     );
   };
 
@@ -321,6 +195,7 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
       ) : null}
 
       {sections.map((section) => {
+        // Standard section — just renders fields in a grid
         if (section.kind === 'section') {
           return (
             <section key={section.key} className="space-y-4">
@@ -331,7 +206,7 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
                 ) : null}
               </div>
 
-              <div className="grid grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-2">
+              <div className="grid auto-rows-[auto_auto_auto] grid-cols-1 gap-x-4 md:grid-cols-2">
                 {section.fields.map((field) =>
                   renderField(
                     field,
@@ -345,6 +220,7 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
           );
         }
 
+        // Repeater section — each item gets its own boxed group of fields
         return (
           <section key={section.key} className="space-y-4">
             <div>
@@ -361,7 +237,7 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
             <div className="space-y-6">
               {section.items.map((item, index) => (
                 <div key={index} className={BOX_CLASS}>
-                  <div className="grid grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-2">
+                  <div className="grid auto-rows-[auto_auto_auto] grid-cols-1 gap-x-4 md:grid-cols-2">
                     {section.fields.map((field) =>
                       renderField(
                         field,
@@ -374,6 +250,7 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
                     )}
                   </div>
 
+                  {/* The first item can't be removed — there must always be at least one */}
                   {index > 0 && (
                     <div className="text-right text-sm">
                       <button
