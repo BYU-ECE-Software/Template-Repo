@@ -280,8 +280,8 @@ export default function ExampleFullPageFormDemo() {
         onSubmit={(e) => {
           e.preventDefault(); // prevents the browser from doing a full form submission because this is a template. when there is real form submission, that logic goes here
 
-          console.log('Example form values:', values);
-          console.log('Example repeater items:', items);
+          console.warn('Example form values:', values);
+          console.warn('Example repeater items:', items);
           setShowSuccessModal(true);
         }}
         submitLabel="Submit Example Form"
@@ -295,7 +295,7 @@ export default function ExampleFullPageFormDemo() {
       >
         <div className="space-y-3 py-2">
           <p className="text-gray-700">
-            Your form was submitted successfully. In a real form, this is where you'd handle saving
+            Your form was submitted successfully. In a real form, this is where you&apos;d handle saving
             to the database, redirecting the user, or showing a confirmation message.
           </p>
         </div>
