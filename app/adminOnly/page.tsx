@@ -16,7 +16,7 @@ export default function AdminOnly() {
   }, [isAdmin, router]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-linear-to-br from-red-50 via-white to-red-100 px-4 text-center">
+    <main className="flex min-h-[calc(100vh-96px)] flex-col items-center justify-center bg-linear-to-br from-red-50 via-white to-red-100 px-4 text-center">
       {/* Badge */}
       <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-300 bg-red-100 px-4 py-1 text-xs font-semibold tracking-widest text-red-700 uppercase shadow-sm">
         <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
