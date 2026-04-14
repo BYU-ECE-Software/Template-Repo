@@ -70,6 +70,7 @@ function ExpandedSubTable({ parentRow, config }: { parentRow: any; config: Expan
 
   useEffect(() => {
     if (!config.fetchRows) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     config
       .fetchRows(parentRow)
