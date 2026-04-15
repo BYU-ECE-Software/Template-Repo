@@ -38,7 +38,7 @@ jobs:
       - name: Generate image tag
         id: meta
         run: |
-          SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          SHA=$(echo ${{ github.event.workflow_run.head_sha }} | cut -c1-7)
           echo "sha_tag=$SHA" >> $GITHUB_OUTPUT
 
       - name: Build and push app image
@@ -85,12 +85,12 @@ jobs:
 
     steps:
 
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Log in to GHCR
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy to test server
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -133,8 +133,11 @@ jobs:
             mkdir -p ~/backups/template-repo
             docker compose -f docker-compose.test.yaml exec -T db \
               sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' \
-              > ~/backups/db-backup-$(date +%Y%m%d-%H%M%S).sql
+              > ~/backups/template-repo/db-backup-$(date +%Y%m%d-%H%M%S).sql
             echo "Backup complete."
+            echo "Clearing old DB backups"
+            ls -t ~/backups/template-repo/db-backup-*.sql | tail -n +11 | xargs -r rm --
+            echo "Cleared old Backups"
 
             # 3. Run migrations
             echo "Running migrations..."
