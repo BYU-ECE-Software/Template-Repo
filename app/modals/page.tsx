@@ -7,6 +7,7 @@ import FormModal from '@/components/general/forms/FormModal';
 import PrimaryButton from '@/components/general/actions/PrimaryButton';
 import PageTitle from '@/components/general/layout/PageTitle';
 
+// Shape of the form data — one key per field
 type ExampleFormValues = {
   text: string;
   email: string;
@@ -21,10 +22,12 @@ type ExampleFormValues = {
 };
 
 export default function ModalsPage() {
+  // Controls which modal is open
   const [baseOpen, setBaseOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
 
+  // Holds the current value of every field in the form modal
   const [formValues, setFormValues] = useState<ExampleFormValues>({
     text: '',
     email: '',
@@ -38,10 +41,12 @@ export default function ModalsPage() {
     price: '',
   });
 
+  // Holds any inline error messages shown below fields after a failed submit attempt
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof ExampleFormValues, string>>>(
     {},
   );
 
+  // Runs on submit — checks required fields and sets error messages if any are missing
   const validateForm = () => {
     const nextErrors: Partial<Record<keyof ExampleFormValues, string>> = {};
 
@@ -55,6 +60,14 @@ export default function ModalsPage() {
     return Object.keys(nextErrors).length === 0;
   };
 
+  // Disables the submit button until all required fields are filled
+  const isFormValid =
+    formValues.text.trim() !== '' &&
+    formValues.email.trim() !== '' &&
+    formValues.select !== '' &&
+    formValues.radio !== '';
+
+  // Clears all field values and errors — called when the modal is opened fresh
   const resetForm = () => {
     setFormValues({
       text: '',
@@ -113,6 +126,7 @@ export default function ModalsPage() {
           </div>
         </div>
 
+        {/* Default, Basic Moal */}
         <BaseModal
           open={baseOpen}
           title="Title Goes Here"
@@ -125,6 +139,7 @@ export default function ModalsPage() {
           </p>
         </BaseModal>
 
+        {/* Modal to Confirm an Action */}
         <ConfirmModal
           open={confirmOpen}
           title="Title: Delete Item"
@@ -136,13 +151,14 @@ export default function ModalsPage() {
           }}
           onCancel={() => setConfirmOpen(false)}
         />
-
+        {/* Modal with a form in it */}
         <FormModal
           open={formOpen}
           title="Example Form Modal"
           values={formValues}
           setValues={setFormValues}
           errors={formErrors}
+          submitDisabled={!isFormValid}
           onClose={() => setFormOpen(false)}
           onSubmit={() => {
             if (!validateForm()) return;
@@ -150,6 +166,7 @@ export default function ModalsPage() {
             console.log(formValues);
             setFormOpen(false);
           }}
+          // list and order of fields in the form
           fields={[
             {
               key: 'text',
@@ -223,6 +240,7 @@ export default function ModalsPage() {
               type: 'file',
               accept: '.pdf,.png,.jpg,.jpeg',
             },
+            // Custom Field. You do all the styling for a custom field yourself
             {
               kind: 'custom',
               key: 'previewCard',
