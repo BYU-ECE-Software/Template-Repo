@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import RowActionMenu from '@/components/general/overlays/RowActionMenu';
-import { FiMoreVertical, FiChevronDown } from 'react-icons/fi';
+import { FiMoreVertical, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import React from 'react';
 
+// Column definition — key must match the data object's field name
 export type DataTableColumn = {
   key: string;
   header: string;
@@ -14,8 +15,10 @@ export type DataTableColumn = {
   render?: (row: any) => ReactNode;
   noWrap?: boolean;
   actions?: DataTableAction[];
+  sortable?: boolean; // adds an asc/desc toggle to this column's header
 };
 
+// A single item in the three-dot action menu
 export type DataTableAction = {
   label: string;
   icon?: ReactNode;
@@ -25,6 +28,7 @@ export type DataTableAction = {
   disabled?: (row: any) => boolean;
 };
 
+// Expanded Portion of a row Column definition — key must match the data object's field name
 export type ExpandedTableColumn = {
   key: string;
   header: string;
@@ -60,14 +64,20 @@ type DataTableProps = {
   columns: DataTableColumn[];
   getRowKey?: (row: any, index: number) => React.Key;
   containerClassName?: string;
-  /** Optional expandable row configuration */
+  // Optional expandable row configuration
   expandableRows?: ExpandableRowsConfig;
+  // sort props — only pass these if any column has sortable: true
+  sortKey?: string;
+  sortDir?: 'asc' | 'desc';
+  onSort?: (key: string, dir: 'asc' | 'desc') => void;
 };
 
+// Renders the inner table that appears when a row is expanded
 function ExpandedSubTable({ parentRow, config }: { parentRow: any; config: ExpandedTableConfig }) {
   const [rows, setRows] = useState<any[]>(() => (config.getRows ? config.getRows(parentRow) : []));
   const [loading, setLoading] = useState(Boolean(config.fetchRows));
 
+  // If fetchRows is provided, load the sub-rows asynchronously from the API
   useEffect(() => {
     if (!config.fetchRows) return;
     setLoading(true);
@@ -85,6 +95,7 @@ function ExpandedSubTable({ parentRow, config }: { parentRow: any; config: Expan
 
   return (
     <div className="pt-3 pb-1">
+      {/* Sub-table header row */}
       <div
         className="grid gap-x-6 border-b border-gray-200 pb-2 text-[11px] font-semibold tracking-widest text-gray-400 uppercase"
         style={{ gridTemplateColumns: gridCols }}
@@ -94,6 +105,7 @@ function ExpandedSubTable({ parentRow, config }: { parentRow: any; config: Expan
         ))}
       </div>
 
+      {/* Sub-table rows */}
       <div className="divide-y divide-gray-100">
         {rows.map((row, i) => (
           <div
@@ -142,7 +154,11 @@ export default function DataTable({
   getRowKey,
   containerClassName = '',
   expandableRows,
+  sortKey = '',
+  sortDir = 'asc',
+  onSort,
 }: DataTableProps) {
+  // Tracks which rows are currently expanded
   const [expandedRows, setExpandedRows] = useState<Set<React.Key>>(new Set());
 
   const toggleRow = (key: React.Key) => {
@@ -173,7 +189,6 @@ export default function DataTable({
           <table className="text-byu-navy min-w-full text-sm">
             <thead className="bg-slate-50 text-[13px] tracking-wide text-gray-500">
               <tr>
-                {/* Expand toggle header cell */}
                 {expandableRows && <th className="w-10 px-3 py-3" />}
 
                 {columns.map((col) => (
@@ -183,7 +198,44 @@ export default function DataTable({
                       col.noWrap ? 'whitespace-nowrap' : 'whitespace-normal'
                     } ${col.headerClassName || ''}`}
                   >
-                    {col.header}
+                    {col.sortable ? (
+                      // Sortable header — clicking toggles asc/desc, × clears the sort
+                      <span className="inline-flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const nextDir =
+                              sortKey === col.key && sortDir === 'asc' ? 'desc' : 'asc';
+                            onSort?.(col.key, nextDir);
+                          }}
+                          className="inline-flex items-center gap-1.5 transition-colors hover:text-gray-700"
+                        >
+                          {col.header}
+                          <span className="flex flex-col leading-none text-gray-300">
+                            <FiChevronUp
+                              className={`h-2.5 w-2.5 ${sortKey === col.key && sortDir === 'asc' ? 'text-gray-600' : ''}`}
+                            />
+                            <FiChevronDown
+                              className={`h-2.5 w-2.5 ${sortKey === col.key && sortDir === 'desc' ? 'text-gray-600' : ''}`}
+                            />
+                          </span>
+                        </button>
+
+                        {/* × only appears on the currently active sort column */}
+                        {sortKey === col.key && (
+                          <button
+                            type="button"
+                            onClick={() => onSort?.('', 'asc')}
+                            className="ml-0.5 text-gray-300 transition-colors hover:text-gray-500"
+                            title="Clear sort"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </span>
+                    ) : (
+                      col.header
+                    )}
                   </th>
                 ))}
               </tr>
@@ -203,7 +255,7 @@ export default function DataTable({
                         isExpanded ? 'bg-byu-royal/5' : ''
                       }`}
                     >
-                      {/* Expand toggle cell */}
+                      {/* Expand toggle — only shown on rows where isExpandable returns true */}
                       {expandableRows && (
                         <td className="w-10 px-3 py-3 align-middle">
                           {canExpand && (
@@ -232,6 +284,7 @@ export default function DataTable({
                           } ${col.cellClassName || ''}`}
                         >
                           {col.actions ? (
+                            // Actions column renders the three-dot menu
                             <div className="flex justify-end">
                               <RowActionMenu
                                 trigger={<FiMoreVertical className="h-4 w-4" />}
@@ -255,7 +308,7 @@ export default function DataTable({
                       ))}
                     </tr>
 
-                    {/* Expanded sub-row */}
+                    {/* Expanded sub-row — renders below the parent row when toggled open */}
                     {expandableRows && canExpand && isExpanded && (
                       <tr key={`${key}-expanded`} className="transition-all">
                         <td colSpan={totalCols} className="bg-slate-50">

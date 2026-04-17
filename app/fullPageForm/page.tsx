@@ -295,8 +295,8 @@ export default function ExampleFullPageFormDemo() {
       >
         <div className="space-y-3 py-2">
           <p className="text-gray-700">
-            Your form was submitted successfully. In a real form, this is where you&apos;d handle saving
-            to the database, redirecting the user, or showing a confirmation message.
+            Your form was submitted successfully. In a real form, this is where you&apos;d handle
+            saving to the database, redirecting the user, or showing a confirmation message.
           </p>
         </div>
       </BaseModal>

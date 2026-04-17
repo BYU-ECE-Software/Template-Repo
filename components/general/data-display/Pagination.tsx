@@ -66,7 +66,7 @@ export default function Pagination({
             type="button"
             onClick={() => goTo(i)}
             aria-current={currentPage === i ? 'page' : undefined}
-            className={`rounded-md border px-3 py-1 text-sm whitespace-nowrap transition ${
+            className={`cursor-pointer rounded-md border px-3 py-1 text-sm whitespace-nowrap transition ${
               currentPage === i
                 ? 'bg-byu-navy border-byu-navy font-semibold text-white'
                 : 'border-byu-navy text-byu-navy hover:bg-byu-navy bg-white hover:text-white'
@@ -99,7 +99,7 @@ export default function Pagination({
               type="button"
               onClick={handlePrev}
               disabled={currentPage === 1}
-              className="border-byu-navy text-byu-navy hover:bg-byu-navy disabled:hover:text-byu-navy rounded-md border bg-white px-3 py-1 text-sm transition hover:text-white disabled:opacity-40 disabled:hover:bg-white"
+              className="border-byu-navy text-byu-navy hover:bg-byu-navy disabled:hover:text-byu-navy cursor-pointer rounded-md border bg-white px-3 py-1 text-sm transition hover:text-white disabled:opacity-40 disabled:hover:bg-white"
             >
               Previous
             </button>
@@ -110,7 +110,7 @@ export default function Pagination({
               type="button"
               onClick={handleNext}
               disabled={currentPage === safeTotalPages}
-              className="border-byu-navy text-byu-navy hover:bg-byu-navy disabled:hover:text-byu-navy rounded-md border bg-white px-3 py-1 text-sm transition hover:text-white disabled:opacity-40 disabled:hover:bg-white"
+              className="border-byu-navy text-byu-navy hover:bg-byu-navy disabled:hover:text-byu-navy cursor-pointer rounded-md border bg-white px-3 py-1 text-sm transition hover:text-white disabled:opacity-40 disabled:hover:bg-white"
             >
               Next
             </button>
