@@ -2,7 +2,7 @@ type ComingSoonPageProps = {
   pageName: string;
 };
 
-const STAR_POSITIONS = [
+const PARTICLE_POSITIONS = [
   [12, 8],
   [55, 15],
   [80, 10],
@@ -25,19 +25,20 @@ const STAR_POSITIONS = [
   [33, 50],
 ];
 
-const STAR_COLORS = ['#818cf8', '#a78bfa', '#fbbf24', '#c7d2fe', '#6d28d9'];
+// Circuit node colors — BYU blue/navy palette with electric accents
+const NODE_COLORS = ['#002E5D', '#0062B8', '#4A90D9', '#00A3E0', '#FFB300'];
 
 export default function ComingSoonPage({ pageName }: ComingSoonPageProps) {
   return (
-    <div className="relative flex min-h-[calc(100vh-96px)] flex-col items-center justify-center overflow-hidden bg-linear-to-br from-violet-100 via-indigo-50 to-purple-100 px-4 py-10">
+    <div className="relative flex min-h-[calc(100vh-125px)] flex-col items-center justify-center overflow-hidden bg-linear-to-br from-slate-100 via-blue-50 to-slate-200 px-4 py-10">
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-8px); }
         }
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.1; transform: scale(0.5) rotate(0deg); }
-          50% { opacity: 0.9; transform: scale(1) rotate(20deg); }
+        @keyframes pulse-node {
+          0%, 100% { opacity: 0.15; transform: scale(0.6); }
+          50% { opacity: 1; transform: scale(1); }
         }
         @keyframes zap {
           0%, 85%, 100% { opacity: 1; transform: rotate(0deg) scale(1); }
@@ -45,29 +46,29 @@ export default function ComingSoonPage({ pageName }: ComingSoonPageProps) {
           95% { opacity: 1; transform: rotate(8deg) scale(0.9); }
         }
         .anim-float { animation: float 3s ease-in-out infinite; }
-        .anim-twinkle { animation: twinkle 3s ease-in-out infinite; }
+        .anim-pulse { animation: pulse-node 3s ease-in-out infinite; }
         .anim-zap { animation: zap 3s ease-in-out infinite; }
       `}</style>
 
-      {/* Twinkling stars */}
+      {/* Floating circuit nodes */}
       <div className="pointer-events-none absolute inset-0">
-        {STAR_POSITIONS.map(([left, top], i) => {
-          const size = 6 + (i % 4) * 3;
+        {PARTICLE_POSITIONS.map(([left, top], i) => {
+          const size = 5 + (i % 4) * 3;
           const duration = `${2.5 + (i % 5) * 0.7}s`;
           const delay = `${(i * 0.35) % 3}s`;
-          const color = STAR_COLORS[i % STAR_COLORS.length];
+          const color = NODE_COLORS[i % NODE_COLORS.length];
+          const isSquare = i % 3 === 0;
           return (
             <span
               key={i}
-              className="anim-twinkle absolute"
+              className="anim-pulse absolute"
               style={{
                 left: `${left}%`,
                 top: `${top}%`,
                 width: `${size}px`,
                 height: `${size}px`,
                 background: color,
-                clipPath:
-                  'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+                borderRadius: isSquare ? '1px' : '50%',
                 animationDuration: duration,
                 animationDelay: delay,
               }}
@@ -76,68 +77,92 @@ export default function ComingSoonPage({ pageName }: ComingSoonPageProps) {
         })}
       </div>
 
-      {/* Floating crest */}
+      {/* Floating circuit board icon */}
       <div className="anim-float mb-5">
-        <svg
-          className="h-20 w-20 drop-shadow-[0_0_12px_#7c3aed88]"
-          viewBox="0 0 72 72"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <polygon
-            points="36,4 68,16 68,40 36,68 4,40 4,16"
-            fill="#1e1b4b"
-            stroke="#818cf8"
+        <svg className="h-20 w-20" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+          {/* PCB board */}
+          <rect
+            x="8"
+            y="8"
+            width="56"
+            height="56"
+            rx="4"
+            fill="#002E5D"
+            stroke="#0062B8"
             strokeWidth="1.5"
           />
-          <polygon
-            points="36,4 52,16 52,34 36,50 20,34 20,16"
-            fill="#312e81"
-            stroke="#4338ca"
-            strokeWidth="0.8"
+
+          {/* Circuit traces */}
+          <line x1="20" y1="20" x2="52" y2="20" stroke="#4A90D9" strokeWidth="1" opacity="0.6" />
+          <line x1="20" y1="36" x2="52" y2="36" stroke="#4A90D9" strokeWidth="1" opacity="0.6" />
+          <line x1="20" y1="52" x2="52" y2="52" stroke="#4A90D9" strokeWidth="1" opacity="0.6" />
+          <line x1="20" y1="20" x2="20" y2="52" stroke="#4A90D9" strokeWidth="1" opacity="0.6" />
+          <line x1="36" y1="20" x2="36" y2="52" stroke="#4A90D9" strokeWidth="1" opacity="0.6" />
+          <line x1="52" y1="20" x2="52" y2="52" stroke="#4A90D9" strokeWidth="1" opacity="0.6" />
+
+          {/* Chip in center */}
+          <rect
+            x="27"
+            y="27"
+            width="18"
+            height="18"
+            rx="2"
+            fill="#0062B8"
+            stroke="#00A3E0"
+            strokeWidth="1"
           />
-          <line x1="36" y1="10" x2="36" y2="62" stroke="#fbbf24" strokeWidth="0.8" opacity="0.6" />
-          <line x1="10" y1="28" x2="62" y2="28" stroke="#fbbf24" strokeWidth="0.8" opacity="0.6" />
-          <polygon
-            points="36,15 39,24 49,24 41,30 44,39 36,33 28,39 31,30 23,24 33,24"
-            fill="#fbbf24"
-          />
-          <circle cx="36" cy="10" r="2.5" fill="#c7d2fe" />
-          <circle cx="62" cy="22" r="2" fill="#c7d2fe" />
-          <circle cx="62" cy="40" r="2" fill="#c7d2fe" />
-          <circle cx="36" cy="64" r="2.5" fill="#c7d2fe" />
-          <circle cx="10" cy="40" r="2" fill="#c7d2fe" />
-          <circle cx="10" cy="22" r="2" fill="#c7d2fe" />
+
+          {/* Chip pins */}
+          <line x1="27" y1="31" x2="22" y2="31" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="27" y1="36" x2="22" y2="36" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="27" y1="41" x2="22" y2="41" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="45" y1="31" x2="50" y2="31" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="45" y1="36" x2="50" y2="36" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="45" y1="41" x2="50" y2="41" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="31" y1="27" x2="31" y2="22" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="36" y1="27" x2="36" y2="22" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="41" y1="27" x2="41" y2="22" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="31" y1="45" x2="31" y2="50" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="36" y1="45" x2="36" y2="50" stroke="#FFB300" strokeWidth="1.2" />
+          <line x1="41" y1="45" x2="41" y2="50" stroke="#FFB300" strokeWidth="1.2" />
+
+          {/* Circuit node dots */}
+          <circle cx="20" cy="20" r="2" fill="#00A3E0" />
+          <circle cx="52" cy="20" r="2" fill="#00A3E0" />
+          <circle cx="20" cy="52" r="2" fill="#00A3E0" />
+          <circle cx="52" cy="52" r="2" fill="#00A3E0" />
+          <circle cx="36" cy="36" r="2" fill="#FFB300" />
         </svg>
       </div>
 
       {/* Badge */}
-      <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-indigo-600 bg-indigo-950 px-4 py-1.5 text-xs tracking-widest text-indigo-200 uppercase shadow-sm">
+      <span className="bg-byu-navy mb-5 inline-flex items-center gap-2 rounded-full border border-blue-700 px-4 py-1.5 text-xs tracking-widest text-blue-200 uppercase shadow-sm">
         <span className="h-2 w-2 animate-pulse rounded-full bg-amber-400" />
-        Work in progress
+        Under construction
       </span>
 
       {/* Headline */}
-      <h1 className="text-center font-serif text-3xl font-bold tracking-tight text-indigo-900 sm:text-4xl md:text-5xl">
-        <span className="text-amber-400">{pageName}</span> page is
+      <h1 className="text-byu-navy text-center text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+        <span className="text-byu-royal">{pageName}</span> page is
         <br />
-        <span className="text-indigo-300">coming soon</span>{' '}
+        <span className="text-slate-500">coming soon</span>{' '}
         <span className="anim-zap inline-block">⚡</span>
       </h1>
 
       {/* Divider */}
-      <div className="my-5 flex items-center gap-3 text-indigo-400 opacity-50">
-        <div className="h-px w-14 bg-indigo-400" />
-        ✦
-        <div className="h-px w-14 bg-indigo-400" />
+      <div className="my-5 flex items-center gap-3 text-blue-300 opacity-50">
+        <div className="h-px w-14 bg-blue-400" />
+        ◆
+        <div className="h-px w-14 bg-blue-400" />
       </div>
 
       {/* Description */}
-      <p className="max-w-md text-center text-base text-indigo-900 italic sm:text-lg">
-        The wizards are still wiring up this section of the website. Check back later for more
-        magical features. 🧙‍♀️⚡
+      <p className="text-byu-navy max-w-md text-center text-base italic sm:text-lg">
+        Our engineers are still soldering this section together. Check back soon for more features.
+        🔧⚡
       </p>
 
-      <p className="mt-6 text-center text-xs text-indigo-600/70">
+      <p className="mt-6 text-center text-xs text-blue-600/70">
         (In the meantime, feel free to explore the other pages that are already live.)
       </p>
     </div>
