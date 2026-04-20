@@ -26,6 +26,13 @@ const PAGES = [
     tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
   },
   {
+    href: 'calendarHeatmap',
+    title: 'Calendar Heatmap',
+    desc: 'GitHub contributions type calendar, ready for your surveilance state needs',
+    tag: 'data',
+    tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+  },
+  {
     href: '/comingSoon',
     title: 'Coming Soon',
     desc: 'Placeholder page for anything still being built.',
