@@ -136,14 +136,80 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                   </Link>
 
                   <Link
-                    href="/modals"
+                    href="/calendarHeatmap"
                     onClick={() => {
                       setComponentsOpen(false);
                       setMobileOpen(false);
                     }}
                     className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
                   >
-                    Modals
+                    Calendar Heatmap
+                  </Link>
+
+                  <Link
+                    href="/Calendar"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Calendar
+                  </Link>
+
+                  <Link
+                    href="/Accordion"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Accordion
+                  </Link>
+
+                  <Link
+                    href="/PageHero"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Page Hero
+                  </Link>
+
+                  <Link
+                    href="/personPictureBioCard"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Person Picture Bio Card
+                  </Link>
+
+                  <Link
+                    href="/tag"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Tags
+                  </Link>
+
+                  <Link
+                    href="/toasts"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Toasts
                   </Link>
                 </div>
               )}
@@ -227,6 +293,76 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                 >
                   Modals
                 </Link>
+
+                <Link
+                    href="/calendarHeatmap"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                    }}
+                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                  >
+                    Calendar Heatmap
+                  </Link>
+
+                  <Link
+                    href="/calendar"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                    }}
+                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                  >
+                    Calendar
+                  </Link>
+
+                  <Link
+                    href="/accordion"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                    }}
+                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                  >
+                    Accordion
+                  </Link>
+
+                  <Link
+                    href="/pageHero"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                    }}
+                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                  >
+                    Page Hero
+                  </Link>
+
+                  <Link
+                    href="/personPictureBioCard"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                    }}
+                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                  >
+                    Person Picture Bio Card
+                  </Link>
+
+                  <Link
+                    href="/tag"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                    }}
+                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                  >
+                    Tags
+                  </Link>
+
+                  <Link
+                    href="/toasts"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                    }}
+                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                  >
+                    Toasts
+                  </Link>
               </div>
             )}
           </div>

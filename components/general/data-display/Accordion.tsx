@@ -56,7 +56,7 @@ function Chevron({ open }: { open: boolean }) {
 // ─── Variant style maps ───────────────────────────────────────────────────────
 
 const HEADER_CLASSES: Record<AccordionVariant, string> = {
-  default: "bg-(--byu-navy) text-white",
+  default: "bg-(--color-byu-navy) text-white",
   light:   "bg-gray-100 text-byu-navy hover:bg-gray-200",
   minimal: "bg-transparent text-byu-navy border-b border-gray-200",
 };

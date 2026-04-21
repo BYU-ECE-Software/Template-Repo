@@ -72,7 +72,7 @@ function HeroOverlayText({
 export default function PageHero({
   title,
   subtitle,
-  image = "/images/heroes/hero-default.jpg",
+  image = "/images/hero-default.webp",
   height = "60vh",
   fit = "cover",
   position = "center",

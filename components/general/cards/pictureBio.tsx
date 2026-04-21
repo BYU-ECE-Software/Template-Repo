@@ -6,7 +6,7 @@ import { NEXT_PUBLIC_BASE_PATH } from "@/next.config";
 // ─── Inner card layout (always rendered) ─────────────────────────────────────
 
 function PersonPictureBioCardInner({ personPictureBio }: { personPictureBio: PersonPictureBio }) {
-  const imageSrc = NEXT_PUBLIC_BASE_PATH + (personPictureBio.image || "/images/placeholder-person.jpg");
+  const imageSrc = NEXT_PUBLIC_BASE_PATH + (personPictureBio.image || "/images/Cosmo.jpg");
 
   return (
     <article
