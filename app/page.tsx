@@ -46,15 +46,15 @@ export default function Home() {
       href: '/accordion',
       title: 'Accordion',
       desc: 'Fun ways to do collapsables',
-      tag: 'data',
-      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+      tag: 'reactive',
+      tagColor: 'bg-blue-100 text-blue-700 border-blue-200',
     },
     {
       href: '/pageHero',
       title: 'Page Hero',
       desc: 'More SPA based than interactive, but a fun way to layout having a large photo',
-      tag: 'data',
-      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+      tag: 'static',
+      tagColor: 'bg-pink-100 text-pink-700 border-pink-200',
     },
     {
       href: '/personPictureBioCard',
@@ -74,8 +74,8 @@ export default function Home() {
       href: '/toasts',
       title: 'Toasts',
       desc: 'Lara designed these, I just love overcomponentizing, and I also made a hook',
-      tag: 'data',
-      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+      tag: 'reactive',
+      tagColor: 'bg-blue-100 text-blue-700 border-blue-200',
     },
   ];
 
