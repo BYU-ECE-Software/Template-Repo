@@ -13,7 +13,8 @@ import { statusToBadgeClasses } from '@/utils/statusBadge';
 import { formatDBEnums } from '@/utils/formatUnfriendlyEnums';
 import { FiBook, FiEdit2, FiShield, FiTrash2, FiZap } from 'react-icons/fi';
 import ConfirmModal from '@/components/general/overlays/ConfirmModal';
-import Toast, { ToastType } from '@/components/general/feedback/Toast';
+// import Toast, { ToastType } from '@/components/general/feedback/Toast';
+import {useToast} from '@/hooks/useToast';
 import FormModal from '@/components/general/forms/FormModal';
 import { useRole } from '../providers/TestingRoleProvider';
 
@@ -103,15 +104,16 @@ export default function DataTableDemo() {
   const [deletingRow, setDeletingRow] = useState(false);
 
   // ── Toast State ───────────────────────────────────────────────────────────
-  const [toast, setToast] = useState<{
-    type: ToastType;
-    title: string;
-    message: string;
-  } | null>(null);
+  // const [toast, setToast] = useState<{
+  //   type: ToastType;
+  //   title: string;
+  //   message: string;
+  // } | null>(null);
 
-  const showToast = (type: ToastType, title: string, message: string) => {
-    setToast({ type, title, message });
-  };
+  // const showToast = (type: ToastType, title: string, message: string) => {
+  //   setToast({ type, title, message });
+  // };
+  const { showToast, ToastContainer } = useToast({position: 'top-right'});
 
   // ── Hardcoded Data (template only) ───────────────────────────────────────
   // In real dev: delete everything below and use the useEffect fetch pattern above instead.
@@ -293,7 +295,7 @@ export default function DataTableDemo() {
   return (
     <>
       {/* Toast notification — appears in the top right after an action */}
-      {toast && (
+      {/* {toast && (
         <div className="fixed top-4 right-4 z-50 w-[min(420px,calc(100vw-2rem))]">
           <Toast
             type={toast.type}
@@ -303,7 +305,8 @@ export default function DataTableDemo() {
             duration={4000}
           />
         </div>
-      )}
+      )} */}
+      <ToastContainer/>
 
       <PageTitle title="SAMPLE DATA TABLE" />
 
@@ -400,11 +403,11 @@ export default function DataTableDemo() {
             try {
               // await updateRow(editRow.id, editRowValues); — call your API update route here
 
-              showToast(
-                'success',
-                'Update successful',
-                'Wizard information would be saved if this was real.',
-              );
+              showToast({
+                type: 'success',
+                title: 'Update successful',
+                message: 'Wizard information would be saved if this was real.',
+            });
               setEditRow(null);
 
               // After saving, re-fetch to get the updated data:
@@ -413,11 +416,11 @@ export default function DataTableDemo() {
             } catch (error) {
               console.error('Update wizard failed:', error);
 
-              showToast(
-                'error',
-                'Update failed',
-                'Wizard edit was unsuccessful. Please try again.',
-              );
+              showToast({
+                type: 'error',
+                title: 'Update failed',
+                message: 'Wizard edit was unsuccessful. Please try again.',
+            });
             }
           }}
         />
@@ -445,11 +448,11 @@ export default function DataTableDemo() {
             try {
               // await deleteFunctionName(deleteTarget.id); — call your API delete route here
 
-              showToast(
-                'success',
-                'Wizard (not really) deleted',
-                `${deleteTarget?.name} would have been removed if this was real.`,
-              );
+              showToast({
+                type: 'success',
+                title: 'Wizard (not really) deleted',
+                message: `${deleteTarget?.name} would have been removed if this was real.`,
+            });
               setDeleteTarget(null);
 
               // After deleting, re-fetch to get the updated data:
@@ -458,7 +461,7 @@ export default function DataTableDemo() {
             } catch (error) {
               console.error('Delete wizard failed:', error);
 
-              showToast('error', 'Delete failed', 'Could not delete the wizard. Please try again.');
+              showToast({ type: 'error', title: 'Delete failed', message: 'Could not delete the wizard. Please try again.'});
             } finally {
               setDeletingRow(false);
             }
