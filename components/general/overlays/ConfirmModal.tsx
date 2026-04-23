@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import BaseModal from '@/components/general/overlays/BaseModal';
-import FormButton from '../actions/FormButton';
+import Button from '../actions/Button';
 
 // Visual intent of the confirm button
 type Variant = 'danger' | 'primary';
@@ -82,27 +82,22 @@ export default function ConfirmModal({
       footer={
         <div className="flex justify-end gap-2">
           {/* Cancel button */}
-          <FormButton
+          <Button
             type="button"
+            variant="secondary"
             onClick={onCancel}
             disabled={busy}
             label={cancelLabel}
-            bgClass="bg-transparent text-byu-navy border border-gray-300"
-            hoverBgClass="hover:bg-gray-50"
-            className="disabled:opacity-50"
           />
 
           {/* Confirm button */}
-          <FormButton
+          <Button
             type="submit"
+            variant={variant === 'danger' ? 'danger' : 'primary'}
             disabled={busy}
-            label={busy ? busyLabel : confirmLabel}
-            bgClass={variant === 'danger' ? 'bg-red-600 text-white' : 'bg-byu-royal text-white'}
-            hoverBgClass={
-              variant === 'danger'
-                ? 'hover:brightness-95 active:brightness-90'
-                : 'hover:bg-[#003C9E]'
-            }
+            loading={busy}
+            loadingLabel={busyLabel}
+            label={confirmLabel}
           />
         </div>
       }

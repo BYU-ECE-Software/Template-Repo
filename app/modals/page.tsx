@@ -4,7 +4,7 @@ import { useState } from 'react';
 import BaseModal from '@/components/general/overlays/BaseModal';
 import ConfirmModal from '@/components/general/overlays/ConfirmModal';
 import FormModal from '@/components/general/forms/FormModal';
-import PrimaryButton from '@/components/general/actions/PrimaryButton';
+import Button from '@/components/general/actions/Button';
 import PageTitle from '@/components/general/layout/PageTitle';
 
 // Shape of the form data — one key per field
@@ -97,7 +97,7 @@ export default function ModalsPage() {
                 Basic modal container with header, body, and footer.
               </p>
 
-              <PrimaryButton label="Open Base Modal" onClick={() => setBaseOpen(true)} />
+              <Button label="Open Base Modal" onClick={() => setBaseOpen(true)} />
             </div>
 
             <div className="space-y-4 rounded-xl border bg-white p-6 text-center shadow-md">
@@ -106,7 +106,7 @@ export default function ModalsPage() {
                 Used for confirming actions like delete or submit.
               </p>
 
-              <PrimaryButton label="Open Confirm Modal" onClick={() => setConfirmOpen(true)} />
+              <Button label="Open Confirm Modal" onClick={() => setConfirmOpen(true)} />
             </div>
 
             <div className="space-y-4 rounded-xl border bg-white p-6 text-center shadow-md">
@@ -115,7 +115,7 @@ export default function ModalsPage() {
                 Full-featured form modal with multiple input types.
               </p>
 
-              <PrimaryButton
+              <Button
                 label="Open Form Modal"
                 onClick={() => {
                   resetForm();

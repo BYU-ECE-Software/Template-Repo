@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { FiTrash2 } from 'react-icons/fi';
-import PrimaryButton from '@/components/general/actions/PrimaryButton';
+import Button from '@/components/general/actions/Button';
 import FilePicker from '@/components/general/forms/FilePicker';
 import FieldWrapper from '@/components/general/forms/FieldWrapper';
 import SelectField from '@/components/general/forms/SelectField';
@@ -15,6 +15,7 @@ import type {
   RadioField,
   SelectField as SelectFieldType,
 } from '@/components/general/forms/formFieldTypes';
+import IconButton from '../actions/IconButton';
 
 // A standard section renders a fixed list of fields
 type StandardSection<TValues> = {
@@ -252,40 +253,40 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
 
                   {/* The first item can't be removed — there must always be at least one */}
                   {index > 0 && (
-                    <div className="text-right text-sm">
-                      <button
+                    <div className="flex justify-end">
+                      <IconButton
                         type="button"
+                        variant="danger"
+                        icon={<FiTrash2 className="h-4 w-4" />}
                         onClick={() => section.onRemove(index)}
-                        className="text-byu-red-bright hover:text-byu-red-dark inline-flex cursor-pointer items-center gap-2"
-                      >
-                        <FiTrash2 className="h-4 w-4" />
-                      </button>
+                        title="Remove item"
+                      />
                     </div>
                   )}
                 </div>
               ))}
             </div>
 
-            <PrimaryButton
+            <Button
               type="button"
+              variant="subtle"
+              size="sm"
               onClick={section.onAdd}
-              bgClass="bg-blue-50 text-byu-royal"
-              hoverBgClass="hover:bg-blue-100"
-              className="px-3 py-2 text-xs"
               icon={<span className="text-base leading-none">+</span>}
-            >
-              {section.addButtonLabel}
-            </PrimaryButton>
+              label={section.addButtonLabel}
+            />
           </section>
         );
       })}
 
       <div className="flex justify-center pt-2">
-        <PrimaryButton
+        <Button
           type="submit"
+          size="lg"
           disabled={submitting}
-          label={submitting ? 'Submitting...' : submitLabel}
-          className="px-6 py-2"
+          loading={submitting}
+          loadingLabel="Submitting…"
+          label={submitLabel}
         />
       </div>
     </form>
