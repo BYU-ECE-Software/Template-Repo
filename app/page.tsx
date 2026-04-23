@@ -74,20 +74,77 @@ const PAGES = [
     tag: 'data',
     tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
   },
-  {
-    href: '/comingSoon',
-    title: 'Coming Soon',
-    desc: 'Placeholder page for anything still being built.',
-    tag: 'template',
-    tagColor: 'bg-gray-100 text-gray-600 border-gray-200',
-  },
 ];
 
 export default function Home() {
   const { isAdmin } = useRole();
 
+  const PAGES = [
+    {
+      href: '/fullPageForm',
+      title: 'Full Page Form',
+      desc: 'Every field type in one place.',
+      tag: 'forms',
+      tagColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+    },
+    {
+      href: '/modals',
+      title: 'Modals',
+      desc: 'BaseModal + FormModal, all handled.',
+      tag: 'overlays',
+      tagColor: 'bg-amber-100 text-amber-700 border-amber-200',
+    },
+    {
+      href: '/dataTable',
+      title: 'Data Table',
+      desc: 'Sortable, filterable, ready to wire up.',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
+  ];
+
+  const SPECIAL_PAGES = [
+    {
+      href: '/comingSoon',
+      title: 'Coming Soon',
+      desc: 'Placeholder for unfinished pages.',
+      tag: 'manual',
+      tagColor: 'bg-purple-100 text-purple-700 border-purple-200',
+    },
+    // Shows the admin page if admin, otherwise shows the 403 page — same slot, different content
+    isAdmin
+      ? {
+          href: '/adminOnly',
+          title: 'Top Secret (Admin Only)',
+          desc: 'You have clearance. Use it wisely.',
+          tag: 'admin',
+          tagColor: 'bg-red-100 text-red-700 border-red-200',
+        }
+      : {
+          href: '/unauthorized',
+          title: '403 — Unauthorized',
+          desc: 'Select Student View and click this button or try to load /adminOnly',
+          tag: 'auto',
+          tagColor: 'bg-gray-100 text-gray-600 border-gray-200',
+        },
+    {
+      href: '/not-found',
+      title: '404 — Not Found',
+      desc: 'Click this button or manually type any nonexisting route in the url',
+      tag: 'auto',
+      tagColor: 'bg-gray-100 text-gray-600 border-gray-200',
+    },
+    {
+      href: '/error-test',
+      title: '500 — Runtime Error',
+      desc: 'Auto-triggered when a component crashes.',
+      tag: 'auto',
+      tagColor: 'bg-gray-100 text-gray-600 border-gray-200',
+    },
+  ];
+
   return (
-    <main className="relative min-h-[calc(100vh-96px)] overflow-hidden bg-white px-6 py-20">
+    <main className="relative min-h-[calc(100vh-125px)] overflow-hidden bg-white px-6 py-16">
       {/* Background grid texture */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.03]"
@@ -98,68 +155,89 @@ export default function Home() {
         }}
       />
 
-      {/* Soft color blobs */}
       <div className="pointer-events-none absolute -top-20 -left-20 h-100 w-100 rounded-full bg-indigo-100 opacity-40 blur-3xl" />
       <div className="pointer-events-none absolute -right-15 -bottom-15 h-87.5 w-87.5 rounded-full bg-blue-100 opacity-30 blur-3xl" />
 
-      <div className="relative mx-auto max-w-3xl">
+      <div className="relative mx-auto max-w-5xl">
         {/* Header */}
-        <div className="mb-16 text-center">
-          <h1 className="text-byu-navy mb-4 text-5xl font-bold tracking-tight sm:text-6xl">
+        <div className="mb-12 text-center">
+          <h1 className="text-byu-navy mb-3 text-5xl font-bold tracking-tight sm:text-6xl">
             ECE Template
             <span className="ml-3 inline-block -rotate-5 rounded-lg bg-indigo-600 px-3 py-0 text-white">
               Repo
             </span>
           </h1>
-
           <p className="mx-auto max-w-md text-base leading-relaxed text-gray-500">
-            Copy the patterns you need. Swap in real data. Ship something. Every page is a working
-            example.
+            Copy the patterns you need. Swap in real data. Ship something.
           </p>
         </div>
 
-        {/* Page cards */}
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {PAGES.map((page) => (
-            <Link
-              key={page.href}
-              href={page.href}
-              className="group relative rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md"
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-byu-navy text-base font-semibold">{page.title}</h2>
-                <span
-                  className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${page.tagColor}`}
+        {/* Two column layout */}
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+          {/* Left — Components */}
+          <div>
+            <p className="mb-3 text-xs font-semibold tracking-widest text-gray-400 uppercase">
+              Components
+            </p>
+            <div className="space-y-2">
+              {PAGES.map((page) => (
+                <Link
+                  key={page.href}
+                  href={page.href}
+                  className="group flex items-center justify-between rounded-xl border border-gray-100 bg-white px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
                 >
-                  {page.tag}
-                </span>
-              </div>
-              <p className="text-sm leading-relaxed text-gray-500">{page.desc}</p>
-              <div className="mt-4 text-xs font-medium text-indigo-500 opacity-0 transition-opacity group-hover:opacity-100">
-                Go there →
-              </div>
-            </Link>
-          ))}
+                  <div>
+                    <p className="text-byu-navy text-sm font-semibold">{page.title}</p>
+                    <p className="text-xs text-gray-400">{page.desc}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${page.tagColor}`}
+                    >
+                      {page.tag}
+                    </span>
+                    <span className="text-xs text-indigo-400 opacity-0 transition-opacity group-hover:opacity-100">
+                      →
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — Special Pages */}
+          <div>
+            <p className="mb-3 text-xs font-semibold tracking-widest text-gray-400 uppercase">
+              Special Pages
+            </p>
+            <div className="space-y-2">
+              {SPECIAL_PAGES.map((page) => (
+                <Link
+                  key={page.href}
+                  href={page.href}
+                  className="group flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-5 py-4 transition-all hover:-translate-y-0.5 hover:border-gray-200 hover:shadow-sm"
+                >
+                  <div>
+                    <p className="text-byu-navy text-sm font-semibold">{page.title}</p>
+                    <p className="text-xs text-gray-400">{page.desc}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${page.tagColor}`}
+                    >
+                      {page.tag}
+                    </span>
+                    <span className="text-xs text-indigo-400 opacity-0 transition-opacity group-hover:opacity-100">
+                      →
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Admin card — only shown to admins */}
-        {isAdmin && (
-          <Link
-            href="/adminOnly"
-            className="group flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 px-6 py-4 transition-all hover:-translate-y-0.5 hover:border-red-300 hover:shadow-sm"
-          >
-            <div>
-              <p className="text-sm font-semibold text-red-700">Top Secret (Admin Only)</p>
-              <p className="text-xs text-red-400">You have clearance. Use it wisely.</p>
-            </div>
-            <span className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-500">
-              Admin
-            </span>
-          </Link>
-        )}
-
-        {/* Footer note */}
-        <p className="mt-12 text-center text-xs text-gray-300">
+        <p className="mt-10 text-center text-xs text-gray-300">
           BYU ECE Department &mdash; internal use only
         </p>
       </div>

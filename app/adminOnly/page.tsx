@@ -5,13 +5,15 @@ import { useRole } from '@/app/providers/TestingRoleProvider';
 import { useRouter } from 'next/navigation';
 
 export default function AdminOnly() {
-  // page only available to admin. redirect to main page if only a student
+  // middleware.ts handles unauthorized access to the page if trying to access from a different page
+
+  // page only available to admin. redirect to 403 (unauthorized) page if you revoke admin access while on the page
   const { isAdmin } = useRole();
   const router = useRouter();
 
   useEffect(() => {
     if (!isAdmin) {
-      router.replace('/');
+      router.replace('/unauthorized');
     }
   }, [isAdmin, router]);
 
