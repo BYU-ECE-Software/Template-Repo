@@ -13,12 +13,15 @@ type NavBarProps = {
 };
 
 const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) => {
-  // every tab that has a dropdown within it needs its own state
+  // every tab that has a dropdown within it needs its own state and ref. be specific in naming
   const [componentsOpen, setComponentsOpen] = useState(false);
+  const [pagesOpen, setPagesOpen] = useState(false);
 
   const desktopNavRef = useRef<HTMLDivElement | null>(null);
-  const desktopDropdownRef = useRef<HTMLDivElement | null>(null);
-  const mobileDropdownRef = useRef<HTMLDivElement | null>(null);
+  const desktopDropdownRefComponents = useRef<HTMLDivElement | null>(null);
+  const desktopDropdownRefPages = useRef<HTMLDivElement | null>(null);
+  const mobileDropdownRefComponents = useRef<HTMLDivElement | null>(null);
+  const mobileDropdownRefPages = useRef<HTMLDivElement | null>(null);
 
   const [navSize, setNavSize] = useState<'base' | 'sm' | 'xs'>('base');
 
@@ -50,24 +53,30 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
-  }, [navPadLeft, componentsOpen]);
+  }, [navPadLeft, componentsOpen, pagesOpen]);
 
   // Close tab dropdowns when clicking outside.
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
 
-      const clickedDesktopDropdown = desktopDropdownRef.current?.contains(target) ?? false;
-      const clickedMobileDropdown = mobileDropdownRef.current?.contains(target) ?? false;
+      const clickedDesktopDropdown =
+        (desktopDropdownRefComponents.current?.contains(target) ?? false) ||
+        (desktopDropdownRefPages.current?.contains(target) ?? false);
+      const clickedMobileDropdown =
+        (mobileDropdownRefComponents.current?.contains(target) ?? false) ||
+        (mobileDropdownRefPages.current?.contains(target) ?? false);
 
       if (!clickedDesktopDropdown && !clickedMobileDropdown) {
         setComponentsOpen(false);
+        setPagesOpen(false);
       }
     };
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setComponentsOpen(false);
+        setPagesOpen(false);
         setMobileOpen(false);
       }
     };
@@ -99,10 +108,13 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
             </Link>
 
             {/* Example of a dropdown tab */}
-            <div ref={mobileDropdownRef}>
+            <div ref={mobileDropdownRefComponents}>
               <button
                 type="button"
-                onClick={() => setComponentsOpen((open) => !open)}
+                onClick={() => {
+                  setComponentsOpen((open) => !open);
+                  setPagesOpen(false);
+                }}
                 className={`flex w-full items-center justify-between px-6 py-4 text-left hover:bg-[#FAFAFA] ${
                   componentsOpen ? 'bg-[#FAFAFA]' : ''
                 }`}
@@ -145,6 +157,17 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                   >
                     Modals
                   </Link>
+
+                  <Link
+                    href="/buttons"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Buttons
+                  </Link>
                 </div>
               )}
             </div>
@@ -160,13 +183,60 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
               </Link>
             )}
 
-            <Link
-              href="/comingSoon"
-              onClick={() => setMobileOpen(false)}
-              className="px-6 py-4 text-left hover:bg-[#FAFAFA]"
-            >
-              Coming Soon
-            </Link>
+            <div ref={mobileDropdownRefPages}>
+              <button
+                type="button"
+                onClick={() => {
+                  setPagesOpen((open) => !open);
+                  setComponentsOpen(false);
+                }}
+                className={`flex w-full items-center justify-between px-6 py-4 text-left hover:bg-[#FAFAFA] ${
+                  pagesOpen ? 'bg-[#FAFAFA]' : ''
+                }`}
+              >
+                <span>Special Pages</span>
+                <FiChevronDown className="text-byu-navy h-4 w-4" aria-hidden="true" />
+              </button>
+
+              {pagesOpen && (
+                <div className="flex flex-col text-sm">
+                  <Link
+                    href="/comingSoon"
+                    onClick={() => {
+                      setPagesOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Coming Soon
+                  </Link>
+
+                  {/* Purposely referencing a link that doesn't exist to trigger a 404 error which redirects automatically to app/not-found.tsx*/}
+                  <Link
+                    href="/brokenLink"
+                    onClick={() => {
+                      setPagesOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    404 Error Page
+                  </Link>
+
+                  {/* Purposely referencing a page with an error to trigger a 500 error which automatically shows the app/error.tsx page*/}
+                  <Link
+                    href="/error-test"
+                    onClick={() => {
+                      setPagesOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    500 Error Page
+                  </Link>
+                </div>
+              )}
+            </div>
           </nav>
 
           <div className="border-t border-gray-200">
@@ -190,10 +260,13 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
           </Link>
 
           {/* Example of a dropdown tab */}
-          <div className="relative" ref={desktopDropdownRef}>
+          <div className="relative" ref={desktopDropdownRefComponents}>
             <button
               type="button"
-              onClick={() => setComponentsOpen((open) => !open)}
+              onClick={() => {
+                setComponentsOpen((open) => !open);
+                setPagesOpen(false);
+              }}
               className={`nav-link-hover inline-flex items-center gap-2 px-8 py-4 whitespace-nowrap hover:bg-[#FAFAFA] ${
                 componentsOpen ? 'nav-link-active bg-[#FAFAFA]' : ''
               }`}
@@ -227,6 +300,14 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                 >
                   Modals
                 </Link>
+
+                <Link
+                  href="/buttons"
+                  onClick={() => setComponentsOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Buttons
+                </Link>
               </div>
             )}
           </div>
@@ -241,12 +322,51 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
             </Link>
           )}
 
-          <Link
-            href="/comingSoon"
-            className="nav-link-hover px-8 py-4 whitespace-nowrap hover:bg-[#FAFAFA]"
-          >
-            Coming Soon
-          </Link>
+          <div className="relative" ref={desktopDropdownRefPages}>
+            <button
+              type="button"
+              onClick={() => {
+                setPagesOpen((open) => !open);
+                setComponentsOpen(false);
+              }}
+              className={`nav-link-hover inline-flex items-center gap-2 px-8 py-4 whitespace-nowrap hover:bg-[#FAFAFA] ${
+                pagesOpen ? 'nav-link-active bg-[#FAFAFA]' : ''
+              }`}
+            >
+              <span>Special Pages</span>
+              <FiChevronDown className="text-byu-navy h-3 w-3" aria-hidden="true" />
+            </button>
+
+            {pagesOpen && (
+              <div className="absolute top-full left-0 w-64 border border-gray-200 bg-white shadow-lg">
+                <Link
+                  href="/comingSoon"
+                  onClick={() => setPagesOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Coming Soon
+                </Link>
+
+                {/* Purposely referencing a link that doesn't exist to trigger a 404 error which redirects automatically to app/not-found.tsx*/}
+                <Link
+                  href="/brokenLink"
+                  onClick={() => setPagesOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  404 Error Page
+                </Link>
+
+                {/* Purposely referencing a page with an error to trigger a 500 error which automatically shows the app/error.tsx page*/}
+                <Link
+                  href="/error-test"
+                  onClick={() => setPagesOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  500 Error Page
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 

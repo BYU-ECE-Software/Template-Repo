@@ -4,6 +4,7 @@
 'use client';
 
 import { useRole } from '@/app/providers/TestingRoleProvider';
+import ToggleSwitch from '@/components/general/actions/ToggleSwitch';
 
 type RoleToggleProps = {
   className?: string;
@@ -20,20 +21,7 @@ export default function RoleToggle({ className = '' }: RoleToggleProps) {
         <span className="font-medium text-white">{isAdmin ? 'Admin' : 'Student'}</span> View
       </span>
 
-      <button
-        type="button"
-        onClick={() => setRole(isAdmin ? 'student' : 'admin')}
-        className="relative inline-flex h-6 w-12 items-center rounded-full bg-white/25 transition hover:bg-white/30 focus:ring-2 focus:ring-white/40 focus:outline-none"
-        aria-label="Toggle role"
-        aria-pressed={isAdmin}
-      >
-        <span className="sr-only">Toggle between Student and Admin view</span>
-        <span
-          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${
-            isAdmin ? 'translate-x-6' : 'translate-x-1'
-          }`}
-        />
-      </button>
+      <ToggleSwitch checked={isAdmin} onChange={(val) => setRole(val ? 'admin' : 'student')} />
     </div>
   );
 }

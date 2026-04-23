@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode, KeyboardEvent } from 'react';
-import FormButton from '../actions/FormButton';
+import Button from '../actions/Button';
 
 type ModalSize = 'sm' | 'md' | 'lg';
 
@@ -125,23 +125,18 @@ export default function BaseModal({
                 footer
               ) : (
                 <div className="flex justify-end gap-2">
-                  <FormButton
-                    type="button"
-                    onClick={onClose}
-                    label="Cancel"
-                    bgClass="bg-transparent text-byu-navy border border-gray-300"
-                    hoverBgClass="hover:bg-gray-50"
-                  />
+                  <Button type="button" variant="secondary" onClick={onClose} label="Cancel" />
 
                   <Wrapper
                     title={submitDisabled ? 'All required fields must be filled.' : undefined}
                   >
-                    <FormButton
+                    <Button
                       type="submit"
+                      variant="primary"
                       disabled={saving || submitDisabled}
-                      label={saving ? 'Saving…' : saveLabel}
-                      bgClass="bg-byu-royal text-white"
-                      hoverBgClass="hover:bg-[#003C9E]"
+                      loading={saving}
+                      loadingLabel="Saving…"
+                      label={saveLabel}
                     />
                   </Wrapper>
                 </div>
