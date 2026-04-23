@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import React, { useMemo } from "react";
-import ReactCalendarHeatmap from "react-calendar-heatmap";
-import "react-calendar-heatmap/dist/styles.css";
+import React, { useMemo } from 'react';
+import ReactCalendarHeatmap from 'react-calendar-heatmap';
+import type { ReactCalendarHeatmapValue, TooltipDataAttrs } from 'react-calendar-heatmap';
+import 'react-calendar-heatmap/dist/styles.css';
 
 export type HeatmapValue = {
   date: string; // "YYYY-MM-DD"
@@ -32,22 +33,22 @@ export type CalendarHeatmapProps = {
 
 const DEFAULT_THRESHOLDS: [number, number, number, number] = [1, 3, 6, 10];
 const DEFAULT_COLORS: [string, string, string, string, string] = [
-  "#ebedf0", // 0 – empty
-  "#9be9a8", // 1 – low
-  "#40c463", // 2
-  "#30a14e", // 3
-  "#216e39", // 4 – high
+  '#ebedf0', // 0 – empty
+  '#9be9a8', // 1 – low
+  '#40c463', // 2
+  '#30a14e', // 3
+  '#216e39', // 4 – high
 ];
 
 function classForCount(
   value: HeatmapValue | null,
-  thresholds: [number, number, number, number]
+  thresholds: [number, number, number, number],
 ): string {
-  if (!value || value.count === 0) return "color-scale-0";
-  if (value.count < thresholds[0]) return "color-scale-1";
-  if (value.count < thresholds[1]) return "color-scale-2";
-  if (value.count < thresholds[2]) return "color-scale-3";
-  return "color-scale-4";
+  if (!value || value.count === 0) return 'color-scale-0';
+  if (value.count < thresholds[0]) return 'color-scale-1';
+  if (value.count < thresholds[1]) return 'color-scale-2';
+  if (value.count < thresholds[2]) return 'color-scale-3';
+  return 'color-scale-4';
 }
 
 export default function CalendarHeatmap({
@@ -59,7 +60,7 @@ export default function CalendarHeatmap({
   colors = DEFAULT_COLORS,
   onClick,
   showLegend = true,
-  className = "",
+  className = '',
 }: CalendarHeatmapProps) {
   const end = endDate ?? new Date();
   const start = useMemo(() => {
@@ -74,31 +75,32 @@ export default function CalendarHeatmap({
     .map(
       (c, i) => `
     .chm-wrapper .color-scale-${i} rect { fill: ${c}; }
-    .chm-wrapper .react-calendar-heatmap .color-scale-${i} { fill: ${c}; }`
+    .chm-wrapper .react-calendar-heatmap .color-scale-${i} { fill: ${c}; }`,
     )
-    .join("");
+    .join('');
 
   return (
     <div className={`chm-wrapper ${className}`}>
       <style>{cssVars}</style>
 
-      {title && (
-        <p className="chm-title">{title}</p>
-      )}
+      {title && <p className="chm-title">{title}</p>}
 
       <ReactCalendarHeatmap
         startDate={start}
         endDate={end}
         values={values}
         classForValue={(v) => classForCount(v as HeatmapValue | null, thresholds)}
-        tooltipDataAttrs={(value: HeatmapValue | null) => {
-          if (!value?.date) return { "data-tip": "No data" };
-          return {
-            "data-tip": `${value.date}: ${value.count} contribution${value.count !== 1 ? "s" : ""}`,
-          };
+        tooltipDataAttrs={(value: ReactCalendarHeatmapValue<string> | undefined) => {
+          const v = value as HeatmapValue | null;
+          const tip = v?.date
+            ? `${v.date}: ${v.count} contribution${v.count !== 1 ? 's' : ''}`
+            : 'No data';
+          return { 'data-tip': tip } as unknown as TooltipDataAttrs;
         }}
         showWeekdayLabels
-        onClick={(v) => onClick?.(v as HeatmapValue | null)}
+        onClick={(v: ReactCalendarHeatmapValue<string> | undefined) =>
+          onClick?.(v as HeatmapValue | null)
+        }
       />
 
       {showLegend && (
