@@ -3,79 +3,6 @@
 import Link from 'next/link';
 import { useRole } from '@/app/providers/TestingRoleProvider';
 
-const PAGES = [
-  {
-    href: '/fullPageForm',
-    title: 'Full Page Form',
-    desc: 'Every field type in one place. The best starting point.',
-    tag: 'forms',
-    tagColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
-  },
-  {
-    href: '/modals',
-    title: 'Modals',
-    desc: 'BaseModal + FormModal. Scroll, Escape, footer — all handled.',
-    tag: 'overlays',
-    tagColor: 'bg-amber-100 text-amber-700 border-amber-200',
-  },
-  {
-    href: '/dataTable',
-    title: 'Data Table',
-    desc: 'Sortable, filterable table component ready to wire up.',
-    tag: 'data',
-    tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
-  },
-  {
-    href: '/calendarHeatmap',
-    title: 'Calendar Heatmap',
-    desc: 'GitHub contributions type calendar, ready for your surveilance state needs',
-    tag: 'data',
-    tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
-  },
-  {
-    href: '/calendar',
-    title: 'Calendar',
-    desc: 'To display static events',
-    tag: 'data',
-    tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
-  },
-  {
-    href: '/accordion',
-    title: 'Accordion',
-    desc: 'Fun ways to do collapsables',
-    tag: 'data',
-    tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
-  },
-  {
-    href: '/pageHero',
-    title: 'Page Hero',
-    desc: 'More SPA based than interactive, but a fun way to layout having a large photo',
-    tag: 'data',
-    tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
-  },
-  {
-    href: '/personPictureBioCard',
-    title: 'PersonPictureBio Card',
-    desc: 'Still workshopping the name',
-    tag: 'data',
-    tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
-  },
-  {
-    href: '/tag',
-    title: 'Tags',
-    desc: 'Also called chips, convenient way to tag things in your data',
-    tag: 'data',
-    tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
-  },
-  {
-    href: '/toasts',
-    title: 'Toasts',
-    desc: 'Lara designed these, I just love overcomponentizing, and I also made a hook',
-    tag: 'data',
-    tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
-  },
-];
-
 export default function Home() {
   const { isAdmin } = useRole();
 
@@ -83,21 +10,70 @@ export default function Home() {
     {
       href: '/fullPageForm',
       title: 'Full Page Form',
-      desc: 'Every field type in one place.',
+      desc: 'Every field type in one place. The best starting point.',
       tag: 'forms',
       tagColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
     },
     {
       href: '/modals',
       title: 'Modals',
-      desc: 'BaseModal + FormModal, all handled.',
+      desc: 'BaseModal + FormModal. Scroll, Escape, footer — all handled.',
       tag: 'overlays',
       tagColor: 'bg-amber-100 text-amber-700 border-amber-200',
     },
     {
       href: '/dataTable',
       title: 'Data Table',
-      desc: 'Sortable, filterable, ready to wire up.',
+      desc: 'Sortable, filterable table component ready to wire up.',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
+    {
+      href: '/calendarHeatmap',
+      title: 'Calendar Heatmap',
+      desc: 'GitHub contributions type calendar, ready for your surveilance state needs',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
+    {
+      href: '/calendar',
+      title: 'Calendar',
+      desc: 'To display static events',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
+    {
+      href: '/accordion',
+      title: 'Accordion',
+      desc: 'Fun ways to do collapsables',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
+    {
+      href: '/pageHero',
+      title: 'Page Hero',
+      desc: 'More SPA based than interactive, but a fun way to layout having a large photo',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
+    {
+      href: '/personPictureBioCard',
+      title: 'PersonPictureBio Card',
+      desc: 'Still workshopping the name',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
+    {
+      href: '/tag',
+      title: 'Tags',
+      desc: 'Also called chips, convenient way to tag things in your data',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
+    {
+      href: '/toasts',
+      title: 'Toasts',
+      desc: 'Lara designed these, I just love overcomponentizing, and I also made a hook',
       tag: 'data',
       tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
     },

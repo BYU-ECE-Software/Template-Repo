@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import PageTitle from '@/components/general/layout/PageTitle';
-import PrimaryButton from '@/components/general/actions/PrimaryButton';
+import Button from '@/components/general/actions/Button';
 import Toast from '@/components/general/feedback/Toast'; 
 import type { ToastType } from '@/components/general/feedback/Toast';
 import { useToast } from '@/hooks/useToast';
@@ -54,7 +54,7 @@ export default function FeedbackShowcasePage() {
               >
                 <h2 className="text-byu-navy text-lg font-semibold capitalize">{type}</h2>
                 <p className="text-sm text-gray-600">{title}</p>
-                <PrimaryButton
+                <Button
                   label={`Show ${type}`}
                   onClick={() => showToast({ type, title, message })}
                 />

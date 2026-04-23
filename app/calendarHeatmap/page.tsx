@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import CalendarHeatmap from "@/components/general/data-display/CalendarHeatmap";
 import type { HeatmapValue } from "@/components/general/data-display/CalendarHeatmap";
-import PrimaryButton from "@/components/general/actions/PrimaryButton";
+import Button from "@/components/general/actions/Button";
 import PageTitle from "@/components/general/layout/PageTitle";
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
@@ -128,7 +128,7 @@ export default function HeatmapDemoPage() {
                 <p className="text-xs uppercase tracking-wide text-gray-500">Contributions</p>
                 <p className="text-byu-navy font-semibold">{clicked.count}</p>
               </div>
-              <PrimaryButton label="Dismiss" onClick={() => setClicked(null)} />
+              <Button label="Dismiss" onClick={() => setClicked(null)} />
             </div>
           )}
 
