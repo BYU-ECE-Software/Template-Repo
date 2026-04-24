@@ -10,6 +10,19 @@ export type HeatmapValue = {
   count: number;
 };
 
+export type HeatmapPreset = 'byu' | 'green' | 'red' | 'gold' | 'teal' | 'github';
+
+// Built-in BYU-branded color presets — pass preset="byu" to use
+// green, red, teal, and gold presets also use byu branded colors in them
+const PRESETS: Record<HeatmapPreset, [string, string, string, string, string]> = {
+  byu: ['#eef1f7', '#b8cce8', '#5a8fd4', '#0047ba', '#002e5d'],
+  green: ['#edf7f3', '#80ceaf', '#10a170', '#007a52', '#006141'],
+  red: ['#fceef1', '#f0a0b0', '#e61744', '#c0102e', '#a3082a'],
+  gold: ['#fdf8ed', '#ffe099', '#ffb700', '#c46a00', '#8c3a00'],
+  teal: ['#eaf7fa', '#85d4e3', '#1fb3d1', '#008fa8', '#006073'],
+  github: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'], // classic GitHub green
+};
+
 export type CalendarHeatmapProps = {
   /** Array of { date, count } objects */
   values: HeatmapValue[];
@@ -21,7 +34,9 @@ export type CalendarHeatmapProps = {
   title?: string;
   /** Colour scale thresholds – index 0 = lowest, 4 = highest */
   thresholds?: [number, number, number, number];
-  /** Colour palette for scale-0 through scale-4 */
+  /** Named color preset — byu (default), green, red, gold, github */
+  preset?: HeatmapPreset;
+  /** Fully custom color palette — overrides preset if provided */
   colors?: [string, string, string, string, string];
   /** Called when a day cell is clicked */
   onClick?: (value: HeatmapValue | null) => void;
@@ -32,13 +47,6 @@ export type CalendarHeatmapProps = {
 };
 
 const DEFAULT_THRESHOLDS: [number, number, number, number] = [1, 3, 6, 10];
-const DEFAULT_COLORS: [string, string, string, string, string] = [
-  '#ebedf0', // 0 – empty
-  '#9be9a8', // 1 – low
-  '#40c463', // 2
-  '#30a14e', // 3
-  '#216e39', // 4 – high
-];
 
 function classForCount(
   value: HeatmapValue | null,
@@ -57,11 +65,15 @@ export default function CalendarHeatmap({
   endDate,
   title,
   thresholds = DEFAULT_THRESHOLDS,
-  colors = DEFAULT_COLORS,
+  preset = 'byu',
+  colors,
   onClick,
   showLegend = true,
   className = '',
 }: CalendarHeatmapProps) {
+  // colors prop takes priority over preset
+  const resolvedColors = colors ?? PRESETS[preset];
+
   const end = endDate ?? new Date();
   const start = useMemo(() => {
     if (startDate) return startDate;
@@ -70,8 +82,7 @@ export default function CalendarHeatmap({
     return d;
   }, [startDate, end]);
 
-  // Inject dynamic colour variables into a <style> tag so SSR is safe
-  const cssVars = colors
+  const cssVars = resolvedColors
     .map(
       (c, i) => `
     .chm-wrapper .color-scale-${i} rect { fill: ${c}; }
@@ -106,7 +117,7 @@ export default function CalendarHeatmap({
       {showLegend && (
         <div className="chm-legend">
           <span className="chm-legend-label">Less</span>
-          {colors.map((c, i) => (
+          {resolvedColors.map((c, i) => (
             <span
               key={i}
               className="chm-legend-cell"
@@ -146,7 +157,6 @@ export default function CalendarHeatmap({
           height: 12px;
           border-radius: 2px;
         }
-        /* Override the library's default colour classes */
         .chm-wrapper .react-calendar-heatmap text {
           font-size: 8px;
           fill: #6b7280;
