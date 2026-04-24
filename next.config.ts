@@ -4,5 +4,5 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: 'standalone',
 };
-
+export const NEXT_PUBLIC_BASE_PATH = "";
 export default nextConfig;

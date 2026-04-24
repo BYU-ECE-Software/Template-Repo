@@ -1,4 +1,4 @@
-import { FaFacebook, FaTwitter, FaLinkedin } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaYoutube } from 'react-icons/fa';
 
 // Footer bar to be used on every page
 const Footer = () => {
@@ -71,7 +71,7 @@ const Footer = () => {
           <h2 className="text-xl font-bold">Connect With Us</h2>
           <div className="mt-2 flex justify-center space-x-4">
             <a
-              href="https://www.facebook.com/BYUECE"
+              href="https://www.facebook.com/BYUECEn/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-white"
@@ -79,15 +79,31 @@ const Footer = () => {
               <FaFacebook />
             </a>
             <a
-              href="https://twitter.com/BYUECE"
+              href="https://www.instagram.com/byu_ecen/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-white"
             >
-              <FaTwitter />
+              <FaInstagram />
             </a>
             <a
-              href="https://www.linkedin.com/school/byu/"
+              href="https://www.youtube.com/channel/UCj2sMA0jEfi8oYhgX6h5g5A"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-white"
+            >
+              <FaYoutube />
+            </a>
+            <a
+              href="https://www.linkedin.com/groups/1826750/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white hover:text-white"
+            >
+              <FaLinkedin />
+            </a>
+            <a
+              href="https://www.linkedin.com/groups/150520/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-white"
