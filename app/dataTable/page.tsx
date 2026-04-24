@@ -14,7 +14,7 @@ import { formatDBEnums } from '@/utils/formatUnfriendlyEnums';
 import { FiBook, FiEdit2, FiShield, FiTrash2, FiZap } from 'react-icons/fi';
 import ConfirmModal from '@/components/general/overlays/ConfirmModal';
 // import Toast, { ToastType } from '@/components/general/feedback/Toast';
-import {useToast} from '@/hooks/useToast';
+import { useToast } from '@/hooks/useToast';
 import FormModal from '@/components/general/forms/FormModal';
 import { useRole } from '../providers/TestingRoleProvider';
 
@@ -113,7 +113,7 @@ export default function DataTableDemo() {
   // const showToast = (type: ToastType, title: string, message: string) => {
   //   setToast({ type, title, message });
   // };
-  const { showToast, ToastContainer } = useToast({position: 'top-right'});
+  const { showToast, ToastContainer } = useToast({ position: 'top-right' });
 
   // ── Hardcoded Data (template only) ───────────────────────────────────────
   // In real dev: delete everything below and use the useEffect fetch pattern above instead.
@@ -306,7 +306,7 @@ export default function DataTableDemo() {
           />
         </div>
       )} */}
-      <ToastContainer/>
+      <ToastContainer />
 
       <PageTitle title="SAMPLE DATA TABLE" />
 
@@ -407,7 +407,7 @@ export default function DataTableDemo() {
                 type: 'success',
                 title: 'Update successful',
                 message: 'Wizard information would be saved if this was real.',
-            });
+              });
               setEditRow(null);
 
               // After saving, re-fetch to get the updated data:
@@ -420,7 +420,7 @@ export default function DataTableDemo() {
                 type: 'error',
                 title: 'Update failed',
                 message: 'Wizard edit was unsuccessful. Please try again.',
-            });
+              });
             }
           }}
         />
@@ -452,7 +452,7 @@ export default function DataTableDemo() {
                 type: 'success',
                 title: 'Wizard (not really) deleted',
                 message: `${deleteTarget?.name} would have been removed if this was real.`,
-            });
+              });
               setDeleteTarget(null);
 
               // After deleting, re-fetch to get the updated data:
@@ -461,7 +461,11 @@ export default function DataTableDemo() {
             } catch (error) {
               console.error('Delete wizard failed:', error);
 
-              showToast({ type: 'error', title: 'Delete failed', message: 'Could not delete the wizard. Please try again.'});
+              showToast({
+                type: 'error',
+                title: 'Delete failed',
+                message: 'Could not delete the wizard. Please try again.',
+              });
             } finally {
               setDeletingRow(false);
             }
