@@ -33,7 +33,12 @@ jobs:
         run: npx vitest run
         
         # - name: Lint
-        #   run: npx eslint .  
+        #   run: npx eslint .
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
         
       - name: Check build
         run: npm run build

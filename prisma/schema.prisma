@@ -13,3 +13,94 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ──────────────────────────────────────────────
+// Enums
+// ──────────────────────────────────────────────
+
+enum Status {
+  IN_GOOD_STANDING
+  ON_PROBATION
+  SUSPENDED
+  INACTIVE
+  EXPELLED
+  BANNED
+}
+
+enum Role {
+  STUDENT
+  PROFESSOR
+  STAFF
+  DARK_LORD
+  DEATH_EATER
+  ORDER_OF_THE_PHOENIX
+}
+
+enum SpellType {
+  CHARM
+  DEFENSIVE
+  UTILITY
+  MEMORY
+  CURSE
+  HEX
+  UNFORGIVABLE
+  DARK
+  MIND
+  TRANSFIGURATION
+  BINDING
+}
+
+// ──────────────────────────────────────────────
+// Models
+// ──────────────────────────────────────────────
+
+model User {
+  id     Int    @id @default(autoincrement())
+  name   String
+  house  String
+  role   Role   @default(STUDENT)
+  status Status @default(IN_GOOD_STANDING)
+  wand   String
+
+  spells UserSpell[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Spell {
+  id   Int       @id @default(autoincrement())
+  name String    @unique
+  type SpellType
+
+  users UserSpell[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("spells")
+}
+
+/// Join table — a user can know many spells, a spell can be known by many users
+model UserSpell {
+  userId  Int
+  spellId Int
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  spell Spell @relation(fields: [spellId], references: [id], onDelete: Cascade)
+
+  @@id([userId, spellId])
+  @@map("user_spells")
+}
+
+/// Generic file record backed by S3 / MinIO
+model File {
+  id        Int      @id @default(autoincrement())
+  link      String // Full S3/MinIO object URL or key
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("files")
+}
