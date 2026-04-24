@@ -86,6 +86,7 @@ services:
     networks:
       - template_repo_network
 
+  # See docker-compose.migrate.yml for in depth explanations about createbuckets and what to change
   createbuckets:
     image: minio/mc
     depends_on:
@@ -100,16 +101,8 @@ services:
         echo 'Waiting for MinIO...';
         sleep 2;
       done;
-      /usr/bin/mc mb --ignore-existing myminio/item-images;
-      echo 'Bucket ensured: item-images';
-      /usr/bin/mc mb --ignore-existing myminio/item-datasheets;
-      echo 'Bucket ensured: item-datasheets';
-      /usr/bin/mc mb --ignore-existing myminio/project-3dprint;
-      echo 'Bucket ensured: project-3dprint';
-      /usr/bin/mc mb --ignore-existing myminio/project-pcbmill;
-      echo 'Bucket ensured: project-pcbmill';
-      /usr/bin/mc mb --ignore-existing myminio/project-lasercut;
-      echo 'Bucket ensured: project-lasercut';
+      /usr/bin/mc mb --ignore-existing myminio/sample-images;
+      echo 'Bucket ensured: sample-images';
       exit 0;
       "
     networks:
