@@ -91,6 +91,13 @@ export default function Home() {
       tag: 'feedback',
       tagColor: 'bg-orange-100 text-orange-700 border-orange-200',
     },
+    {
+      href: '/card',
+      title: 'Cards',
+      desc: 'A flexible display card that supports text, images, and actions in multiple layouts.',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
   ];
 
   const SPECIAL_PAGES = [

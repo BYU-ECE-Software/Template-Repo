@@ -245,6 +245,17 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                   >
                     Count Badge
                   </Link>
+
+                  <Link
+                    href="/card"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Cards
+                  </Link>
                 </div>
               )}
             </div>
@@ -462,6 +473,14 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                   className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
                 >
                   Count Badge
+                </Link>
+
+                <Link
+                  href="/card"
+                  onClick={() => setComponentsOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Cards
                 </Link>
               </div>
             )}
