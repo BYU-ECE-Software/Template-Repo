@@ -4,7 +4,7 @@ import { useState } from 'react';
 import PageTitle from '@/components/general/layout/PageTitle';
 import Card from '@/components/general/cards/Card';
 
-// Sample images from Unsplash — replace with your own in real dev
+// Sample images from Unsplash — swap these out for your own images in real dev
 const SAMPLE_IMAGES = {
   mountain: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
   city: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
@@ -20,166 +20,269 @@ export default function CardDemoPage() {
       <PageTitle title="CARD" />
       <div className="px-6 py-10">
         <div className="mx-auto max-w-5xl space-y-12">
-          {/* ── Text only ──────────────────────────────────────────────── */}
+          {/* ── Text only ─────────────────────────────────────────────────
+              No image needed — title and description are enough for simple info cards */}
           <section className="space-y-4">
             <div>
-              <h2 className="text-byu-navy text-lg font-semibold">Text Card</h2>
+              <h2 className="text-byu-navy text-lg font-semibold">Text Only</h2>
               <p className="mt-0.5 text-sm text-gray-500">
-                Just <code className="rounded bg-gray-100 px-1">title</code> and{' '}
-                <code className="rounded bg-gray-100 px-1">description</code> — no image needed.
+                The simplest form — title and description, nothing else. No tag, no button, no
+                image.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <Card title="Title only" />
               <Card
-                title="Simple Text Card"
-                description="This is the most basic card — just a title and some description text. No image, no tag, no action."
+                title="Title and description"
+                description="Just a title and description. The most minimal content card."
               />
+              {/* subtitle sits between title and description — good for dates, authors, or categories */}
               <Card
-                title="With a Tag"
-                description="Add a tag chip to categorize the card. Pass a variant to control the color."
-                tag={{ label: 'Info', variant: 'info' }}
-              />
-              <Card
-                title="With an Action"
-                description="Pass an action to render a button at the bottom of the card."
-                tag={{ label: 'Draft', variant: 'gray' }}
-                action={{ label: 'View details', onClick: () => setClicked('text-action') }}
-              />
-            </div>
-          </section>
-
-          {/* ── Text with subtitle ─────────────────────────────────────── */}
-          <section className="space-y-4">
-            <div>
-              <h2 className="text-byu-navy text-lg font-semibold">Text with Subtitle</h2>
-              <p className="mt-0.5 text-sm text-gray-500">
-                Add a <code className="rounded bg-gray-100 px-1">subtitle</code> between the title
-                and description for secondary context like a date, author, or category.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <Card
-                title="ECE Department Update"
+                title="With a subtitle"
                 subtitle="April 24, 2026"
-                description="The department has announced new lab hours for the spring semester. All students must register in advance."
-                tag={{ label: 'Announcement', variant: 'royal' }}
-              />
-              <Card
-                title="Research Opportunity"
-                subtitle="Dr. Sarah Johnson"
-                description="Looking for undergraduate students interested in embedded systems research. Prior experience with C preferred."
-                tag={{ label: 'Research', variant: 'success' }}
-                action={{ label: 'Apply now', onClick: () => setClicked('research') }}
-              />
-              <Card
-                title="Lab Equipment Request"
-                subtitle="Submitted by you"
-                description="Your request for oscilloscope access has been received and is pending approval from the lab coordinator."
-                tag={{ label: 'Pending', variant: 'warning' }}
-                action={{ label: 'Check status', onClick: () => setClicked('lab') }}
+                description="Subtitle sits between the title and description — good for dates, authors, or categories."
               />
             </div>
           </section>
 
-          {/* ── Accent / list style ────────────────────────────────────── */}
+          {/* ── Text + tag ────────────────────────────────────────────────
+              Tags float in the top right — pick the variant that matches the meaning */}
           <section className="space-y-4">
             <div>
-              <h2 className="text-byu-navy text-lg font-semibold">Accent Cards</h2>
+              <h2 className="text-byu-navy text-lg font-semibold">Text + Tag</h2>
               <p className="mt-0.5 text-sm text-gray-500">
-                Pass <code className="rounded bg-gray-100 px-1">accent</code> to add a colored left
-                border stripe. Great for lists, feeds, and timeline-style layouts. Control the color
-                with <code className="rounded bg-gray-100 px-1">accentColor</code>.
-              </p>
-            </div>
-            <div className="space-y-3">
-              <Card
-                accent
-                accentColor="bg-byu-royal"
-                title="Post-Op Forms"
-                subtitle="TODAY"
-                description="Let your Care Team know how you're doing so they can make any necessary recommendations."
-                tag={{ label: 'Prompt', variant: 'info' }}
-                action={{ label: 'View', onClick: () => setClicked('prompt') }}
-              />
-              <Card
-                accent
-                accentColor="bg-byu-green-bright"
-                title="Complete today's to-do list"
-                subtitle="TODAY"
-                description="Make sure you are up to speed on your daily tasks."
-                tag={{ label: 'List', variant: 'success' }}
-                action={{ label: 'Open', onClick: () => setClicked('list') }}
-              />
-              <Card
-                accent
-                accentColor="bg-byu-yellow-bright"
-                title="Upcoming deadline"
-                subtitle="DUE FRIDAY"
-                description="Lab report for EE 420 is due at midnight. Don't forget to submit on Learning Suite."
-                tag={{ label: 'Deadline', variant: 'warning' }}
-                action={{ label: 'Go to course', onClick: () => setClicked('deadline') }}
-              />
-            </div>
-          </section>
-
-          {/* ── Image top ──────────────────────────────────────────────── */}
-          <section className="space-y-4">
-            <div>
-              <h2 className="text-byu-navy text-lg font-semibold">Image Card (Top)</h2>
-              <p className="mt-0.5 text-sm text-gray-500">
-                Pass <code className="rounded bg-gray-100 px-1">image</code> with{' '}
-                <code className="rounded bg-gray-100 px-1">imagePosition="top"</code> (the default)
-                to render an image above the card content.
+                Tags sit in the top right and don't affect the layout. Any tag variant works.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <Card
-                image={SAMPLE_IMAGES.mountain}
-                imageAlt="Mountain landscape"
-                title="Mountain Retreat"
-                description="A breathtaking view from the summit. Perfect for a weekend getaway."
-                tag={{ label: 'Nature', variant: 'success' }}
-                action={{ label: 'Learn more', onClick: () => setClicked('mountain') }}
+                title="Royal tag"
+                description="Use royal for primary brand categorization."
+                tag={{ label: 'Featured', variant: 'royal' }}
               />
               <Card
-                image={SAMPLE_IMAGES.city}
-                imageAlt="City skyline"
-                title="City Conference"
-                subtitle="June 12–14, 2026"
-                description="Join us for the annual ECE conference in downtown Salt Lake City."
-                tag={{ label: 'Event', variant: 'royal' }}
-                action={{ label: 'Register', onClick: () => setClicked('city') }}
+                title="Status tag"
+                description="Use success, warning, or error for status-driven content."
+                tag={{ label: 'Live', variant: 'success' }}
               />
               <Card
-                image={SAMPLE_IMAGES.forest}
-                imageAlt="Forest"
-                title="Research Field Trip"
-                description="Students will spend the day collecting environmental sensor data in the field."
+                title="Neutral tag"
+                description="Gray works well for drafts, archived items, or secondary labels."
+                tag={{ label: 'Draft', variant: 'gray' }}
+              />
+              <Card
+                title="Info tag"
+                description="Info is good for categorization without implying a status."
                 tag={{ label: 'Research', variant: 'info' }}
-                action={{ label: 'Sign up', onClick: () => setClicked('forest') }}
-                secondaryAction={{
-                  label: 'Details',
-                  variant: 'secondary',
-                  onClick: () => setClicked('forest-details'),
+              />
+              <Card
+                title="Warning tag"
+                subtitle="Due Friday"
+                description="Warning draws attention to deadlines or items that need action soon."
+                tag={{ label: 'Urgent', variant: 'warning' }}
+              />
+              <Card
+                title="Error tag"
+                description="Use error sparingly — only for truly destructive or failed states."
+                tag={{ label: 'Failed', variant: 'error' }}
+              />
+            </div>
+          </section>
+
+          {/* ── Text + actions ────────────────────────────────────────────
+              One action fills the width by default. Two actions share the space. */}
+          <section className="space-y-4">
+            <div>
+              <h2 className="text-byu-navy text-lg font-semibold">Text + Actions</h2>
+              <p className="mt-0.5 text-sm text-gray-500">
+                One or two actions. The primary action fills the width when alone, shares space when
+                paired with a secondary.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <Card
+                title="Single action"
+                description="One action fills the full width of the card footer."
+                action={{ label: 'View details', onClick: () => setClicked('single') }}
+              />
+              <Card
+                title="Two actions"
+                description="Secondary action sits to the left of the primary."
+                action={{ label: 'Submit', onClick: () => setClicked('submit') }}
+                secondaryAction={{ label: 'Cancel', onClick: () => setClicked('cancel') }}
+              />
+              <Card
+                title="Danger action"
+                description="Use the danger variant for destructive actions like delete or remove."
+                tag={{ label: 'Destructive', variant: 'error' }}
+                action={{ label: 'Delete', variant: 'danger', onClick: () => setClicked('delete') }}
+                secondaryAction={{ label: 'Cancel', onClick: () => setClicked('cancel') }}
+              />
+              <Card
+                title="Tag and action together"
+                subtitle="Dr. Sarah Johnson"
+                description="Tags and actions coexist — tag floats top right, action pins to the bottom."
+                tag={{ label: 'Research', variant: 'success' }}
+                action={{ label: 'Apply now', onClick: () => setClicked('apply') }}
+              />
+              {/* actionSize="auto" shrinks the button to fit its label instead of stretching full width */}
+              <Card
+                title="Smaller action button"
+                description="Pass actionSize='auto' to size the button to its label instead of stretching full width."
+                action={{
+                  label: 'View report',
+                  variant: 'navy',
+                  onClick: () => setClicked('navy'),
+                }}
+                actionSize="auto"
+              />
+              <Card
+                title="Subtle action"
+                description="Subtle is a soft blue — good for less prominent CTAs."
+                action={{
+                  label: 'Learn more',
+                  variant: 'subtle',
+                  onClick: () => setClicked('subtle'),
                 }}
               />
             </div>
           </section>
 
-          {/* ── Image background ───────────────────────────────────────── */}
+          {/* ── Accent cards ──────────────────────────────────────────────
+              Pass accent={true} and accentColor to add a left stripe in any BYU color */}
           <section className="space-y-4">
             <div>
-              <h2 className="text-byu-navy text-lg font-semibold">Image Card (Background)</h2>
+              <h2 className="text-byu-navy text-lg font-semibold">Accent Cards</h2>
               <p className="mt-0.5 text-sm text-gray-500">
-                Pass <code className="rounded bg-gray-100 px-1">imagePosition="background"</code> to
-                fill the entire card with the image and overlay text on top. Best for hero-style
-                cards where the image is the main feature.
+                The accent stripe works with or without tags and actions. Great for feeds and
+                timelines.
+              </p>
+            </div>
+            <div className="space-y-3">
+              <Card
+                accent
+                accentColor="bg-byu-navy"
+                title="Accent only — no tag or action"
+                subtitle="MARCH 1, 2026"
+                description="The stripe alone is enough to create visual rhythm in a list without adding any interactive elements."
+              />
+              <Card
+                accent
+                accentColor="bg-byu-royal"
+                title="Accent with tag"
+                subtitle="TODAY"
+                description="Tag adds categorization without requiring any user action."
+                tag={{ label: 'Announcement', variant: 'royal' }}
+              />
+              <Card
+                accent
+                accentColor="bg-byu-green-bright"
+                title="Accent with action"
+                subtitle="TODAY"
+                description="Adding an action turns a passive card into an interactive one."
+                action={{ label: 'Complete', onClick: () => setClicked('complete') }}
+              />
+              <Card
+                accent
+                accentColor="bg-byu-yellow-bright"
+                title="Accent with tag and action"
+                subtitle="DUE FRIDAY"
+                description="All three together — stripe, tag, and action — for the most information-dense list item."
+                tag={{ label: 'Deadline', variant: 'warning' }}
+                action={{ label: 'Go to course', onClick: () => setClicked('deadline') }}
+              />
+              <Card
+                accent
+                accentColor="bg-byu-royal"
+                title="Accent with smaller action button"
+                description="actionSize='auto' works on accent cards too."
+                tag={{ label: 'Tag' }}
+                action={{ label: 'Action', onClick: () => setClicked('action') }}
+                actionSize="auto"
+              />
+              <Card
+                accent
+                accentColor="bg-byu-red-bright"
+                title="Accent with two actions"
+                subtitle="REQUIRES ATTENTION"
+                description="Two actions on an accent card — the secondary sits left, primary right."
+                tag={{ label: 'Urgent', variant: 'error' }}
+                action={{
+                  label: 'Resolve',
+                  variant: 'danger',
+                  onClick: () => setClicked('resolve'),
+                }}
+                secondaryAction={{ label: 'Dismiss', onClick: () => setClicked('dismiss') }}
+              />
+            </div>
+          </section>
+
+          {/* ── Image top ─────────────────────────────────────────────────
+              Image renders above the content — imagePosition="top" is the default */}
+          <section className="space-y-4">
+            <div>
+              <h2 className="text-byu-navy text-lg font-semibold">Image Top</h2>
+              <p className="mt-0.5 text-sm text-gray-500">
+                Image sits above the content. Works with and without tags, subtitles, and actions.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <Card image={SAMPLE_IMAGES.forest} imageAlt="Forest" title="Image and title only" />
+              <Card
+                image={SAMPLE_IMAGES.mountain}
+                imageAlt="Mountain"
+                title="Image with tag"
+                description="Tag sits top right over the content area."
+                tag={{ label: 'Nature', variant: 'success' }}
+              />
+              <Card
+                image={SAMPLE_IMAGES.city}
+                imageAlt="City"
+                title="City Conference"
+                subtitle="June 12–14, 2026"
+                description="Subtitle, description, and a single action."
+                action={{ label: 'Register', onClick: () => setClicked('register') }}
+              />
+              {/* Most complete version of a top-image card */}
+              <Card
+                image={SAMPLE_IMAGES.cabin}
+                imageAlt="Cabin"
+                title="Full featured image card"
+                subtitle="3 Night Stay"
+                description="Tag, subtitle, description, and two actions — the most complete top-image card."
+                tag={{ label: 'Popular', variant: 'royal' }}
+                action={{ label: 'Book now', onClick: () => setClicked('book') }}
+                secondaryAction={{ label: 'Save', onClick: () => setClicked('save') }}
+              />
+            </div>
+          </section>
+
+          {/* ── Image background ──────────────────────────────────────────
+              Pass imagePosition="background" — gradient overlay keeps text readable */}
+          <section className="space-y-4">
+            <div>
+              <h2 className="text-byu-navy text-lg font-semibold">Image Background</h2>
+              <p className="mt-0.5 text-sm text-gray-500">
+                Full bleed image with a dark gradient overlay. Text and buttons are always white.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Card
+                image={SAMPLE_IMAGES.mountain}
+                imageAlt="Mountain"
+                imagePosition="background"
+                title="Title only on background"
+              />
+              <Card
+                image={SAMPLE_IMAGES.forest}
+                imageAlt="Forest"
+                imagePosition="background"
+                title="With a tag"
+                tag={{ label: 'Featured', variant: 'gray' }}
+              />
+              <Card
                 image={SAMPLE_IMAGES.cabin}
-                imageAlt="Mountain cabin"
+                imageAlt="Cabin"
                 imagePosition="background"
                 title="Swiss Chalet"
                 subtitle="4 Night Stay"
@@ -187,61 +290,21 @@ export default function CardDemoPage() {
                 tag={{ label: 'Guest Favorite', variant: 'gray' }}
                 action={{ label: 'Reserve now', onClick: () => setClicked('chalet') }}
               />
+              {/* Secondary button auto-switches to a white ghost style on dark backgrounds */}
               <Card
-                image={SAMPLE_IMAGES.mountain}
-                imageAlt="Mountain"
+                image={SAMPLE_IMAGES.city}
+                imageAlt="City"
                 imagePosition="background"
-                title="Santorini Villa"
-                subtitle="3 Night Stay"
-                description="Luxury villa overlooking the Aegean Sea with breathtaking sunset views."
-                tag={{ label: 'Top Rated', variant: 'gray' }}
-                action={{ label: 'Reserve now', onClick: () => setClicked('villa') }}
-                secondaryAction={{
-                  label: 'Save',
-                  variant: 'secondary',
-                  onClick: () => setClicked('villa-save'),
-                }}
+                title="City Retreat"
+                subtitle="2 Night Stay"
+                description="Modern city apartment with stunning skyline views and rooftop access."
+                tag={{ label: 'New', variant: 'info' }}
+                action={{ label: 'Reserve now', onClick: () => setClicked('city-bg') }}
+                secondaryAction={{ label: 'Save', onClick: () => setClicked('city-save') }}
               />
             </div>
           </section>
 
-          {/* ── Two actions ────────────────────────────────────────────── */}
-          <section className="space-y-4">
-            <div>
-              <h2 className="text-byu-navy text-lg font-semibold">Two Actions</h2>
-              <p className="mt-0.5 text-sm text-gray-500">
-                Pass both <code className="rounded bg-gray-100 px-1">action</code> and{' '}
-                <code className="rounded bg-gray-100 px-1">secondaryAction</code> to render two
-                buttons side by side.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <Card
-                title="Delete this record?"
-                description="This action cannot be undone. All associated data will be permanently removed."
-                tag={{ label: 'Destructive', variant: 'error' }}
-                action={{ label: 'Delete', variant: 'danger', onClick: () => setClicked('delete') }}
-                secondaryAction={{
-                  label: 'Cancel',
-                  variant: 'secondary',
-                  onClick: () => setClicked('cancel'),
-                }}
-              />
-              <Card
-                title="Submit assignment"
-                subtitle="EE 420 — Lab Report"
-                description="Review your work before submitting. You can resubmit up until the deadline."
-                action={{ label: 'Submit', onClick: () => setClicked('submit') }}
-                secondaryAction={{
-                  label: 'Preview',
-                  variant: 'secondary',
-                  onClick: () => setClicked('preview'),
-                }}
-              />
-            </div>
-          </section>
-
-          {/* Clicked state feedback */}
           {clicked && (
             <div className="rounded-xl border border-gray-200 bg-gray-50 px-5 py-3 text-sm text-gray-600">
               Last action: <span className="text-byu-navy font-medium">{clicked}</span>
@@ -260,33 +323,17 @@ export default function CardDemoPage() {
             <pre className="overflow-x-auto rounded-lg bg-gray-50 p-4 text-xs leading-relaxed text-gray-800">
               {`import Card from '@/components/general/data-display/Card';
 
-// Text only
-<Card title="Title" description="Some description text." />
+// Bare minimum
+<Card title="Title" />
 
-// With subtitle and tag
+// Text with all content
 <Card
   title="Title"
   subtitle="Subtitle or date"
   description="Description text."
   tag={{ label: 'Info', variant: 'info' }}
-/>
-
-// Image top
-<Card
-  image="/path/to/image.jpg"
-  imagePosition="top"   // default
-  title="Title"
-  description="Description."
   action={{ label: 'Go', onClick: () => {} }}
-/>
-
-// Image background (full bleed)
-<Card
-  image="/path/to/image.jpg"
-  imagePosition="background"
-  title="Title"
-  description="Description."
-  action={{ label: 'Reserve', onClick: () => {} }}
+  secondaryAction={{ label: 'Cancel', onClick: () => {} }}
 />
 
 // Accent stripe
@@ -295,6 +342,28 @@ export default function CardDemoPage() {
   accentColor="bg-byu-royal"
   title="Title"
   description="Description."
+/>
+
+// Image top (default)
+<Card
+  image="/path/to/image.jpg"
+  title="Title"
+  action={{ label: 'Go', onClick: () => {} }}
+/>
+
+// Image background (full bleed)
+<Card
+  image="/path/to/image.jpg"
+  imagePosition="background"
+  title="Title"
+  action={{ label: 'Reserve', onClick: () => {} }}
+/>
+
+// Smaller action button
+<Card
+  title="Title"
+  action={{ label: 'Go', onClick: () => {} }}
+  actionSize="auto"
 />`}
             </pre>
           </div>
