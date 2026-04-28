@@ -1,9 +1,9 @@
-name: template-repo
+name: template_repo
 
 services:
   app:
     image: ghcr.io/byu-ece-software/template-repo-dev:latest
-    container_name: template_repo_app
+    # container_name: template_repo_app
     env_file:
       - .env
     depends_on:
@@ -15,7 +15,7 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
     networks:
-      - template_repo_network
+      - network
       - proxy
     labels:
       - traefik.enable=true
@@ -27,7 +27,7 @@ services:
 
   nginx:
     image: ghcr.io/byu-ece-software/template-repo-dev-nginx:latest
-    container_name: template_repo_nginx
+    # container_name: template_repo_nginx
     depends_on:
       app:
         condition: service_started
@@ -35,7 +35,7 @@ services:
     expose:
       - "80"
     networks:
-      - template_repo_network
+      - network
       - proxy
     labels:
       - traefik.enable=true
@@ -50,7 +50,7 @@ services:
 
   db:
     image: postgres:16
-    container_name: template_repo_db
+    # container_name: template_repo_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -68,11 +68,11 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - template_repo_network
+      - network
 
   minio:
     image: minio/minio
-    container_name: template_repo_minio
+    # container_name: template_repo_minio
     restart: unless-stopped
     expose:
       # - "9000"
@@ -84,7 +84,7 @@ services:
       - minio_data:/data
     command: server /data --console-address ":9001"
     networks:
-      - template_repo_network
+      - network
 
   # See docker-compose.migrate.yml for in depth explanations about createbuckets and what to change
   createbuckets:
@@ -106,7 +106,7 @@ services:
       exit 0;
       "
     networks:
-      - template_repo_network
+      - network
 
   migrate:
     image: ghcr.io/byu-ece-software/template-repo-dev-migrator:latest
@@ -118,10 +118,10 @@ services:
       db:
         condition: service_healthy
     networks:
-      - template_repo_network
+      - network
 
 networks:
-  template_repo_network:
+  network:
     driver: bridge
   proxy:
     external: true
