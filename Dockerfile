@@ -19,8 +19,12 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
-ENV DATABASE_URL=$DATABASE_URL
+ARG DATABASE_URL
+ARG MINIO_ROOT_USER
+ARG MINIO_ROOT_PASSWORD
+RUN MINIO_ROOT_USER=$MINIO_ROOT_USER \
+    MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
+    DATABASE_URL=$DATABASE_URL
 RUN npx prisma generate --no-engine
 RUN npm run build
 
