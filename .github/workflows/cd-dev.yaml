@@ -114,11 +114,11 @@ jobs:
 
             git pull origin dev
 
-            IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
+            export IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
 
             # 1. Pull new images
             echo "Pulling images (tag: $IMAGE_TAG)..."
-            IMAGE_TAG=$IMAGE_TAG docker compose -f docker-compose.test.yaml pull
+            docker compose -f docker-compose.test.yaml pull
 
             # 2a. Ensure db is up and healthy before backing up
             echo "Starting database..."
@@ -155,7 +155,7 @@ jobs:
 
             # 4. Deploy new app
             echo "Deploying app..."
-            IMAGE_TAG=$IMAGE_TAG docker compose -f docker-compose.test.yaml \
+            docker compose -f docker-compose.test.yaml \
               up -d --remove-orphans
 
             # 5. Cleanup
