@@ -23,10 +23,10 @@ ARG DATABASE_URL
 ARG MINIO_ROOT_USER
 ARG MINIO_ROOT_PASSWORD
 RUN npx prisma generate --no-engine
-RUN MINIO_ROOT_USER=$MINIO_ROOT_USER \
-    MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
-    DATABASE_URL=$DATABASE_URL \
-    npm run build
+# RUN MINIO_ROOT_USER=$MINIO_ROOT_USER \
+#     MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD \
+#     DATABASE_URL=$DATABASE_URL \
+RUN npm run build
 
 # Migration stage — has schema, CLI, and migrations folder
 FROM base AS migrator
