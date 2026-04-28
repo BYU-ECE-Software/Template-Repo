@@ -2,7 +2,7 @@ name: template_repo
 
 services:
   app:
-    image: ghcr.io/byu-ece-software/template-repo-dev:latest
+    image: ghcr.io/byu-ece-software/template-repo-dev:{IMAGE_TAG:-latest}
     container_name: template_repo_app
     env_file:
       - .env
@@ -26,7 +26,7 @@ services:
       - traefik.http.services.template-repo-api.loadbalancer.server.port=3000
 
   nginx:
-    image: ghcr.io/byu-ece-software/template-repo-dev-nginx:latest
+    image: ghcr.io/byu-ece-software/template-repo-dev-nginx:{IMAGE_TAG:-latest}
     container_name: template_repo_nginx
     depends_on:
       app:
@@ -109,7 +109,7 @@ services:
       - network
 
   migrate:
-    image: ghcr.io/byu-ece-software/template-repo-dev-migrator:latest
+    image: ghcr.io/byu-ece-software/template-repo-dev-migrator:{IMAGE_TAG:-latest}
     command: npx prisma migrate deploy
     environment:
       DATABASE_URL: ${DATABASE_URL}
