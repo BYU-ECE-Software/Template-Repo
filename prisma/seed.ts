@@ -1,4 +1,4 @@
-import { PrismaClient, Role, Status, SpellType } from '../app/generated/prisma/client';
+import { PrismaClient, Role, Status, SpellType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
