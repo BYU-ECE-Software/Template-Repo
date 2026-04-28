@@ -42,3 +42,10 @@ jobs:
         
       - name: Check build
         run: npm run build
+
+        env:
+          MINIO_ROOT_USER: example
+          MINIO_ROOT_PASSWORD: example
+          MINIO_ENDPOINT: localhost
+          MINIO_PORT: 9000
+          MINIO_USE_SSL: false
