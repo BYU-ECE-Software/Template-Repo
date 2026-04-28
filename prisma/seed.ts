@@ -62,7 +62,7 @@ async function main() {
       role: Role.STUDENT,
       status: Status.IN_GOOD_STANDING,
       wand: 'Holly, Phoenix Feather',
-      spells: [ "Expelliarmus", "Expecto Patronum", "Stupefy", "Accio"],
+      spells: ['Expelliarmus', 'Expecto Patronum', 'Stupefy', 'Accio'],
     },
     {
       id: 2,
@@ -71,7 +71,7 @@ async function main() {
       role: Role.STUDENT,
       status: Status.IN_GOOD_STANDING,
       wand: 'Vine, Dragon Heartstring',
-      spells: [ "Alohomora", "Obliviate", "Wingardium Leviosa", "Reparo", "Lumos"],
+      spells: ['Alohomora', 'Obliviate', 'Wingardium Leviosa', 'Reparo', 'Lumos'],
     },
     {
       id: 3,
@@ -348,18 +348,6 @@ async function main() {
       },
     });
     console.log(`  ✔ Wizard: ${user.name}`);
-  }
-
-  // ── Files (MinIO / S3 examples) ───────────────────────────────────────────
-
-  const files = [
-    { link: 'https://minio.example.com/bucket/harry-potter-profile.jpg' },
-    { link: 'https://minio.example.com/bucket/hermione-granger-profile.jpg' },
-  ];
-
-  for (const file of files) {
-    const record = await prisma.file.create({ data: file });
-    console.log(`  ✔ File: ${record.id} → ${record.link}`);
   }
 
   console.log('\n✅ Seeding complete!');

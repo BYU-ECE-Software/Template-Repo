@@ -49,6 +49,8 @@ jobs:
           push: true
           build-args: |
             DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
+            MINIO_ROOT_USER=dummy
+            MINIO_ROOT_PASSWORD=dummy
           tags: |
             ghcr.io/byu-ece-software/template-repo-dev:latest
             ghcr.io/byu-ece-software/template-repo-dev:${{ steps.meta.outputs.sha_tag }}
