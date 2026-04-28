@@ -98,6 +98,13 @@ export default function Home() {
       tag: 'data',
       tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
     },
+    {
+      href: '/dnd',
+      title: 'Draggables, Droppables, Sortables',
+      desc: 'Oh my!',
+      tag: 'reactive',
+      tagColor: 'bg-blue-100 text-blue-700 border-blue-200',
+    },
   ];
 
   const SPECIAL_PAGES = [
