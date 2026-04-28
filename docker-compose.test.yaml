@@ -3,7 +3,7 @@ name: template_repo
 services:
   app:
     image: ghcr.io/byu-ece-software/template-repo-dev:latest
-    # container_name: template_repo_app
+    container_name: template_repo_app
     env_file:
       - .env
     depends_on:
@@ -27,7 +27,7 @@ services:
 
   nginx:
     image: ghcr.io/byu-ece-software/template-repo-dev-nginx:latest
-    # container_name: template_repo_nginx
+    container_name: template_repo_nginx
     depends_on:
       app:
         condition: service_started
@@ -50,7 +50,7 @@ services:
 
   db:
     image: postgres:16
-    # container_name: template_repo_db
+    container_name: template_repo_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -72,7 +72,7 @@ services:
 
   minio:
     image: minio/minio
-    # container_name: template_repo_minio
+    container_name: template_repo_minio
     restart: unless-stopped
     expose:
       # - "9000"
