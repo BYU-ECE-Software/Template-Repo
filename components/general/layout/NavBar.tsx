@@ -325,6 +325,14 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                 </div>
               )}
             </div>
+
+            <Link
+              href="/minio"
+              onClick={() => setMobileOpen(false)}
+              className="px-6 py-4 text-left hover:bg-[#FAFAFA]"
+            >
+              MinIO
+            </Link>
           </nav>
 
           <div className="border-t border-gray-200">
@@ -541,6 +549,13 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
               </div>
             )}
           </div>
+
+          <Link
+            href="/minio"
+            className="nav-link-hover px-8 py-4 whitespace-nowrap hover:bg-[#FAFAFA]"
+          >
+            MinIO
+          </Link>
         </div>
       </nav>
 
