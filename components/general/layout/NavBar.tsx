@@ -256,6 +256,17 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                   >
                     Cards
                   </Link>
+
+                  <Link
+                    href="/dnd"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Drag, Drop, Sort
+                  </Link>
                 </div>
               )}
             </div>
@@ -489,6 +500,14 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                   className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
                 >
                   Cards
+                </Link>
+
+                <Link
+                  href="/dnd"
+                  onClick={() => setComponentsOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Drag, Drop, Sort
                 </Link>
               </div>
             )}
