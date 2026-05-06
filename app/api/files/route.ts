@@ -1,7 +1,7 @@
 // =============================================
 // FILE: app/api/files/route.ts
 // =============================================
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // POST /api/files - Create a new file record in the database

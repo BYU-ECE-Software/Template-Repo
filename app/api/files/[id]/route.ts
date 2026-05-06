@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { minioClient, SAMPLE_IMAGES_BUCKET } from '@/lib/minioClient';
+import { minioClient, SAMPLE_IMAGES_BUCKET } from '@/lib/minio/client';
 
 // DELETE /api/files/[id] - Delete a file row from the db and remove the object from MinIO
 export async function DELETE(

@@ -29,7 +29,6 @@ import { FiMenu } from 'react-icons/fi';
 
 export type SortableItem = {
   id: UniqueIdentifier;
-  [key: string]: unknown;
 };
 
 export type SortableListDirection = 'vertical' | 'horizontal' | 'grid';
@@ -58,7 +57,6 @@ export type SortableListProps<T extends SortableItem> = {
 type SortableItemWrapperProps = {
   id: UniqueIdentifier;
   children: (dragHandleProps: React.HTMLAttributes<HTMLElement>) => ReactNode;
-  isDragging?: boolean;
   dragWholeItem?: boolean;
   itemClassName?: string;
 };
@@ -66,7 +64,6 @@ type SortableItemWrapperProps = {
 function SortableItemWrapper({
   id,
   children,
-  isDragging,
   dragWholeItem,
   itemClassName,
 }: SortableItemWrapperProps) {

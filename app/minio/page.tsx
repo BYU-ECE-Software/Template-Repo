@@ -6,12 +6,13 @@
 // Step 3 — retrieve files from the db and display them by calling the GET route which fetches from MinIO on demand
 // Step 4 — update a file row (uploads new file to MinIO, saves new key, deletes old object from MinIO)
 // Step 5 — delete a file row (removes from db and deletes the object from MinIO)
-// See lib/api/uploadedFiles.ts for the api calls and app/api/minio/sample-images/route.ts for the routes
+// See lib/minio/uploadedFiles.ts for the api calls and app/api/minio/sample-images/route.ts for the routes
 
 import { useState, useEffect } from 'react';
 import PageTitle from '@/components/general/layout/PageTitle';
 import Button from '@/components/general/actions/Button';
-import Toast, { ToastType } from '@/components/general/feedback/Toast';
+import type { ToastType } from '@/components/general/feedback/Toast';
+import Toast from '@/components/general/feedback/Toast';
 import FilePicker from '@/components/general/forms/FilePicker';
 import DataTable, { type DataTableColumn } from '@/components/general/data-display/DataTable';
 import ConfirmModal from '@/components/general/overlays/ConfirmModal';
@@ -22,9 +23,8 @@ import {
   getFiles,
   updateFile,
   deleteFile,
-} from '@/lib/api/uploadedFiles';
+} from '@/lib/minio/uploadedFiles';
 import { FiExternalLink, FiEdit2, FiTrash2 } from 'react-icons/fi';
-import IconButton from '@/components/general/actions/IconButton';
 
 type SampleFile = {
   id: number;
@@ -159,7 +159,7 @@ export default function MinioPage() {
     }
   };
 
-  const columns: DataTableColumn[] = [
+  const columns: DataTableColumn<SampleFile>[] = [
     {
       key: 'id',
       header: 'ID',
@@ -171,7 +171,7 @@ export default function MinioPage() {
     {
       key: 'link_on_page',
       header: 'Render Inline',
-      render: (row: any) => {
+      render: (row) => {
         if (!row.link) return null;
 
         return (
@@ -179,7 +179,7 @@ export default function MinioPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/api/files/${row.id}/sample-image?t=${new Date(row.updatedAt).getTime()}`}
-              alt={row.id ?? 'Item photo'}
+              alt={row.id != null ? String(row.id) : 'Item photo'}
               className="h-full w-full object-contain"
               onError={(e) => {
                 const img = e.currentTarget as HTMLImageElement;
@@ -199,7 +199,7 @@ export default function MinioPage() {
     {
       key: 'link_in_tab',
       header: 'Open in Viewer Tab',
-      render: (row: any) => {
+      render: (row) => {
         if (!row.link) return null;
 
         return (
@@ -222,7 +222,7 @@ export default function MinioPage() {
         {
           label: 'Replace file',
           icon: <FiEdit2 className="h-4 w-4" />,
-          onClick: (row: any) => {
+          onClick: (row) => {
             setEditTarget(row);
             setEditFile(null);
           },
@@ -231,7 +231,7 @@ export default function MinioPage() {
           label: 'Delete',
           icon: <FiTrash2 className="h-4 w-4" />,
           variant: 'danger',
-          onClick: (row: any) => setDeleteTarget(row),
+          onClick: (row) => setDeleteTarget(row),
         },
       ],
     },

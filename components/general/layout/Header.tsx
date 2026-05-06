@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import NavBar from './NavBar';
-import SignInSignOut from '../auth/SignInSignOut';
-import RoleToggle from '../auth/RoleToggle';
+import SignInSignOut from '@/components/dev/SignInSignOut';
+import RoleToggle from '@/components/dev/RoleToggle';
 
 const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -19,6 +19,10 @@ const Header: React.FC = () => {
               rel="noopener noreferrer"
               className="border-byu-royal mr-4 border-r pr-4"
             >
+              {/* SVG asset — next/image's optimization (resizing, format conversion)
+                  doesn't apply, and forcing fixed dimensions fights with the
+                  `h-10 w-auto` aspect-preserving sizing used here. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/BYU_monogram_white.svg" alt="BYU logo" className="h-10 w-auto" />
             </a>
             <h1 className="text-2xl">ECE Template Repo</h1>

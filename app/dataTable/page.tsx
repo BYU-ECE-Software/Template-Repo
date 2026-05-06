@@ -24,8 +24,8 @@ import { FiBook, FiEdit2, FiShield, FiTrash2, FiZap } from 'react-icons/fi';
 import ConfirmModal from '@/components/general/overlays/ConfirmModal';
 import { useToast } from '@/hooks/useToast';
 import FormModal from '@/components/general/forms/FormModal';
-import { useRole } from '../providers/TestingRoleProvider';
-import { getUsers, type User } from '@/lib/api/users';
+import { useRole } from '@/components/dev/TestingRoleProvider';
+import { getUsers, type User, type Spell } from '@/lib/api/users';
 
 export default function DataTableDemo() {
   const { isAdmin } = useRole();
@@ -96,7 +96,7 @@ export default function DataTableDemo() {
   // editRow holds the full row object so we know which record is being edited.
   // editRowValues holds the current form field values inside the edit modal.
   // In real dev: update the type to match the shape of your own data.
-  const [editRow, setEditRow] = useState<any | null>(null);
+  const [editRow, setEditRow] = useState<User | null>(null);
   const [editRowValues, setEditRowValues] = useState<{
     name: string;
     house: string;
@@ -120,7 +120,7 @@ export default function DataTableDemo() {
 
   // ── Delete Row State ──────────────────────────────────────────────────────
   // deleteTarget holds the row being deleted so we can show the name in the confirm modal
-  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
   const [deletingRow, setDeletingRow] = useState(false);
 
   // ── Toast ─────────────────────────────────────────────────────────────────
@@ -140,7 +140,7 @@ export default function DataTableDemo() {
   // key must match the field name in your data object.
   // render() lets you return custom JSX instead of plain text.
   // sortable: true adds asc/desc arrows to the header.
-  const columns: DataTableColumn[] = [
+  const columns: DataTableColumn<User>[] = [
     // Plain text column — no render needed, key renders the value directly
     {
       key: 'name',
@@ -203,7 +203,7 @@ export default function DataTableDemo() {
     // Wrapping in isAdmin hides the entire column from non-admin users.
     // In real dev: remove the isAdmin check if all users should have access, or swap in your own auth check
     ...(isAdmin
-      ? [
+      ? ([
           {
             key: 'actions',
             header: '',
@@ -211,12 +211,16 @@ export default function DataTableDemo() {
               {
                 label: 'Edit',
                 icon: <FiEdit2 className="h-4 w-4" />,
-                onClick: (row: any) => {
+                onClick: (row) => {
                   // Pre-fill the edit form with the current row values before opening the modal
                   setEditRowValues({
                     name: row.name,
                     house: row.house,
-                    status: row.status,
+                    status: row.status as
+                      | 'IN_GOOD_STANDING'
+                      | 'ON_PROBATION'
+                      | 'BANNED'
+                      | 'INACTIVE',
                     role: row.role,
                     wand: row.wand,
                   });
@@ -227,11 +231,11 @@ export default function DataTableDemo() {
                 label: 'Delete',
                 icon: <FiTrash2 className="h-4 w-4" />,
                 variant: 'danger' as const, // renders this menu item in red
-                onClick: (row: any) => setDeleteTarget(row),
+                onClick: (row) => setDeleteTarget(row),
               },
             ],
           },
-        ]
+        ] satisfies DataTableColumn<User>[])
       : []),
   ];
 
@@ -240,7 +244,7 @@ export default function DataTableDemo() {
   // isExpandable controls which rows get the expand toggle — rows that return false won't show one.
   // expandedTable defines the inner table that appears when a row is expanded.
   // In real dev: use this for one-to-many relationships (e.g. a user with many orders)
-  const expandableRows: ExpandableRowsConfig = {
+  const expandableRows: ExpandableRowsConfig<User, Spell> = {
     isExpandable: (row) => row.spells.length > 0,
 
     expandedTable: {
@@ -287,297 +291,302 @@ export default function DataTableDemo() {
       <ToastContainer />
       <PageTitle title="SAMPLE DATA TABLE" />
 
-      <div className="space-y-10 px-12 py-8">
-        {/* ── How the data gets here ──────────────────────────────────────
+      <div className="px-6 py-10">
+        <div className="mx-auto max-w-7xl space-y-10">
+          {/* ── How the data gets here ──────────────────────────────────────
             This section explains the full data flow so devs understand what is happening */}
-        <div className="space-y-3 rounded-xl border bg-white p-6 shadow-md">
-          <h2 className="text-byu-navy text-lg font-semibold">How the data gets here</h2>
-          <p className="text-sm text-gray-600">
-            This table pulls live data from the database — no hardcoded arrays. The flow is:
-          </p>
-          <ol className="list-decimal space-y-1 pl-5 text-sm text-gray-600">
-            <li>
-              <code className="rounded bg-gray-100 px-1">lib/api/users.ts</code> — exports{' '}
-              <code className="rounded bg-gray-100 px-1">getUsers()</code>, a fetch function that
-              calls the API with pagination, search, and sort params
-            </li>
-            <li>
-              <code className="rounded bg-gray-100 px-1">app/api/users/route.ts</code> — the GET
-              route that receives those params, queries the db via Prisma, and returns a page of
-              results plus pagination metadata
-            </li>
-            <li>
-              A <code className="rounded bg-gray-100 px-1">useEffect</code> on this page calls{' '}
-              <code className="rounded bg-gray-100 px-1">getUsers()</code> whenever page, page size,
-              search, or sort changes — the table always reflects the current state
-            </li>
-          </ol>
-          <p className="text-sm text-gray-500 italic">
-            In real dev: replace <code className="rounded bg-gray-100 px-1">getUsers()</code> with
-            your own fetch function from <code className="rounded bg-gray-100 px-1">lib/api/</code>{' '}
-            and update the columns to match your schema.
-          </p>
-        </div>
+          <div className="space-y-3 rounded-xl border bg-white p-6 shadow-md">
+            <h2 className="text-byu-navy text-lg font-semibold">How the data gets here</h2>
+            <p className="text-sm text-gray-600">
+              This table pulls live data from the database — no hardcoded arrays. The flow is:
+            </p>
+            <ol className="list-decimal space-y-1 pl-5 text-sm text-gray-600">
+              <li>
+                <code className="rounded bg-gray-100 px-1">lib/api/users.ts</code> — exports{' '}
+                <code className="rounded bg-gray-100 px-1">getUsers()</code>, a fetch function that
+                calls the API with pagination, search, and sort params
+              </li>
+              <li>
+                <code className="rounded bg-gray-100 px-1">app/api/users/route.ts</code> — the GET
+                route that receives those params, queries the db via Prisma, and returns a page of
+                results plus pagination metadata
+              </li>
+              <li>
+                A <code className="rounded bg-gray-100 px-1">useEffect</code> on this page calls{' '}
+                <code className="rounded bg-gray-100 px-1">getUsers()</code> whenever page, page
+                size, search, or sort changes — the table always reflects the current state
+              </li>
+            </ol>
+            <p className="text-sm text-gray-500 italic">
+              In real dev: replace <code className="rounded bg-gray-100 px-1">getUsers()</code> with
+              your own fetch function from{' '}
+              <code className="rounded bg-gray-100 px-1">lib/api/</code> and update the columns to
+              match your schema.
+            </p>
+          </div>
 
-        {/* ── Search ───────────────────────────────────────────────────────
+          {/* ── Search ───────────────────────────────────────────────────────
             SearchBar is a controlled input — its value and onChange are managed in state above.
             Changing the search resets to page 1 and triggers a re-fetch via the useEffect. */}
-        <div className="space-y-3">
-          <h2 className="text-byu-navy text-lg font-semibold">Search</h2>
-          <p className="text-sm text-gray-500">
-            Search is handled server-side — the API filters results, not the frontend. Type to
-            search by name or house. Results update automatically.
-          </p>
-          <div className="flex justify-end">
-            <SearchBar
-              value={searchInput}
-              onChange={handleSearchChange}
-              placeholder="Search wizards…"
-              widthClass="w-full sm:w-80 md:w-96"
-            />
+          <div className="space-y-3">
+            <h2 className="text-byu-navy text-lg font-semibold">Search</h2>
+            <p className="text-sm text-gray-500">
+              Search is handled server-side — the API filters results, not the frontend. Type to
+              search by name or house. Results update automatically.
+            </p>
+            <div className="flex justify-end">
+              <SearchBar
+                value={searchInput}
+                onChange={handleSearchChange}
+                placeholder="Search wizards…"
+                widthClass="w-full sm:w-80 md:w-96"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* ── Data Table ───────────────────────────────────────────────────
+          {/* ── Data Table ───────────────────────────────────────────────────
             The table itself. All the interesting stuff is in the columns array above.
             Sortable columns send sortBy/sortDir to the API on click.
             Expandable rows show nested spell data inline.
             The actions column (admin only) opens edit/delete modals. */}
-        <div className="space-y-3">
-          <h2 className="text-byu-navy text-lg font-semibold">Data Table</h2>
-          <p className="text-sm text-gray-500">
-            Each column demonstrates a different rendering pattern — plain text, colored badges,
-            enum formatting, icons, and action menus. Sortable columns are marked with arrows. Rows
-            with spells have an expand toggle. The three-dot action menu is admin-only — toggle your
-            role in the header to see it appear and disappear.
-          </p>
+          <div className="space-y-3">
+            <h2 className="text-byu-navy text-lg font-semibold">Data Table</h2>
+            <p className="text-sm text-gray-500">
+              Each column demonstrates a different rendering pattern — plain text, colored badges,
+              enum formatting, icons, and action menus. Sortable columns are marked with arrows.
+              Rows with spells have an expand toggle. The three-dot action menu is admin-only —
+              toggle your role in the header to see it appear and disappear.
+            </p>
 
-          {/* scrollMarginTop accounts for the sticky header so the table isn't hidden behind it on page change */}
-          <div ref={tableRef} style={{ scrollMarginTop: '150px' }}>
-            <DataTable
-              data={data} // current page of results from the API
-              columns={columns}
-              expandableRows={expandableRows}
-              emptyMessage="No wizards found."
-              loading={loading} // shows a loading state while the API call is in flight
-              sortKey={sortKey} // which column is currently sorted
-              sortDir={sortDir} // asc or desc
-              onSort={handleSort} // called when a sortable column header is clicked
-            />
+            {/* scrollMarginTop accounts for the sticky header so the table isn't hidden behind it on page change */}
+            <div ref={tableRef} style={{ scrollMarginTop: '150px' }}>
+              <DataTable
+                data={data} // current page of results from the API
+                columns={columns}
+                expandableRows={expandableRows}
+                emptyMessage="No wizards found."
+                loading={loading} // shows a loading state while the API call is in flight
+                sortKey={sortKey} // which column is currently sorted
+                sortDir={sortDir} // asc or desc
+                onSort={handleSort} // called when a sortable column header is clicked
+              />
+            </div>
           </div>
-        </div>
 
-        {/* ── Pagination ───────────────────────────────────────────────────
+          {/* ── Pagination ───────────────────────────────────────────────────
             Pagination is also server-side. currentPage and pageSize are sent to the API.
             totalPages comes back from res.meta.totalPages in the API response.
             Changing page or page size triggers a re-fetch via the useEffect. */}
-        <div className="space-y-3">
-          <h2 className="text-byu-navy text-lg font-semibold">Pagination</h2>
-          <p className="text-sm text-gray-500">
-            The API returns one page of results at a time. Use the controls below to navigate pages
-            or change how many results show per page. The total page count comes from the API
-            response — the frontend never calculates it.
-          </p>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages} // from res.meta.totalPages
-            onPageChange={goToPage}
-            pageSize={pageSize}
-            setPageSize={(size) => {
-              setPageSize(size);
-              setCurrentPage(1); // reset to page 1 when page size changes
-            }}
-            itemLabel="Wizards"
-          />
-        </div>
+          <div className="space-y-3">
+            <h2 className="text-byu-navy text-lg font-semibold">Pagination</h2>
+            <p className="text-sm text-gray-500">
+              The API returns one page of results at a time. Use the controls below to navigate
+              pages or change how many results show per page. The total page count comes from the
+              API response — the frontend never calculates it.
+            </p>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages} // from res.meta.totalPages
+              onPageChange={goToPage}
+              pageSize={pageSize}
+              setPageSize={(size) => {
+                setPageSize(size);
+                setCurrentPage(1); // reset to page 1 when page size changes
+              }}
+              itemLabel="Wizards"
+            />
+          </div>
 
-        {/* ── Column rendering patterns ─────────────────────────────────── */}
-        <div className="space-y-4 rounded-xl border bg-white p-6 shadow-md">
-          <h2 className="text-byu-navy text-lg font-semibold">Column Rendering Patterns</h2>
-          <p className="text-sm text-gray-600">
-            The five column types used in the table above — each is a different way to pass data
-            into a DataTable column definition.
-          </p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
-              <p className="text-byu-navy text-sm font-semibold">Plain text</p>
-              <p className="text-xs text-gray-500">
-                Just <code className="rounded bg-gray-100 px-1">key</code> +{' '}
-                <code className="rounded bg-gray-100 px-1">header</code> — no render needed. Used
-                for name and role.
-              </p>
-            </div>
-            <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
-              <p className="text-byu-navy text-sm font-semibold">Badge / colored pill</p>
-              <p className="text-xs text-gray-500">
-                <code className="rounded bg-gray-100 px-1">render()</code> returns a{' '}
-                <code className="rounded bg-gray-100 px-1">{'<span>'}</code> with classes from{' '}
-                <code className="rounded bg-gray-100 px-1">statusToBadgeClasses()</code>. Used for
-                house.
-              </p>
-            </div>
-            <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
-              <p className="text-byu-navy text-sm font-semibold">Enum formatting</p>
-              <p className="text-xs text-gray-500">
-                <code className="rounded bg-gray-100 px-1">formatDBEnums()</code> converts{' '}
-                <code className="rounded bg-gray-100 px-1">IN_GOOD_STANDING</code> →{' '}
-                <code className="rounded bg-gray-100 px-1">In Good Standing</code>. Used for status.
-              </p>
-            </div>
-            <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
-              <p className="text-byu-navy text-sm font-semibold">Icon + text</p>
-              <p className="text-xs text-gray-500">
-                <code className="rounded bg-gray-100 px-1">render()</code> returns an icon alongside
-                text using{' '}
-                <code className="rounded bg-gray-100 px-1">flex items-center gap-1.5</code>. Used
-                for wand.
-              </p>
-            </div>
-            <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
-              <p className="text-byu-navy text-sm font-semibold">Actions menu</p>
-              <p className="text-xs text-gray-500">
-                Pass an <code className="rounded bg-gray-100 px-1">actions</code> array instead of{' '}
-                <code className="rounded bg-gray-100 px-1">render()</code>. Each action gets a
-                label, icon, and onClick.{' '}
-                <code className="rounded bg-gray-100 px-1">variant: 'danger'</code> renders in red.
-              </p>
-            </div>
-            <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
-              <p className="text-byu-navy text-sm font-semibold">Expandable rows</p>
-              <p className="text-xs text-gray-500">
-                Pass <code className="rounded bg-gray-100 px-1">expandableRows</code> to the
-                DataTable with an inner column definition. The expand toggle only appears when{' '}
-                <code className="rounded bg-gray-100 px-1">isExpandable</code> returns true.
-              </p>
+          {/* ── Column rendering patterns ─────────────────────────────────── */}
+          <div className="space-y-4 rounded-xl border bg-white p-6 shadow-md">
+            <h2 className="text-byu-navy text-lg font-semibold">Column Rendering Patterns</h2>
+            <p className="text-sm text-gray-600">
+              The five column types used in the table above — each is a different way to pass data
+              into a DataTable column definition.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
+                <p className="text-byu-navy text-sm font-semibold">Plain text</p>
+                <p className="text-xs text-gray-500">
+                  Just <code className="rounded bg-gray-100 px-1">key</code> +{' '}
+                  <code className="rounded bg-gray-100 px-1">header</code> — no render needed. Used
+                  for name and role.
+                </p>
+              </div>
+              <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
+                <p className="text-byu-navy text-sm font-semibold">Badge / colored pill</p>
+                <p className="text-xs text-gray-500">
+                  <code className="rounded bg-gray-100 px-1">render()</code> returns a{' '}
+                  <code className="rounded bg-gray-100 px-1">{'<span>'}</code> with classes from{' '}
+                  <code className="rounded bg-gray-100 px-1">statusToBadgeClasses()</code>. Used for
+                  house.
+                </p>
+              </div>
+              <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
+                <p className="text-byu-navy text-sm font-semibold">Enum formatting</p>
+                <p className="text-xs text-gray-500">
+                  <code className="rounded bg-gray-100 px-1">formatDBEnums()</code> converts{' '}
+                  <code className="rounded bg-gray-100 px-1">IN_GOOD_STANDING</code> →{' '}
+                  <code className="rounded bg-gray-100 px-1">In Good Standing</code>. Used for
+                  status.
+                </p>
+              </div>
+              <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
+                <p className="text-byu-navy text-sm font-semibold">Icon + text</p>
+                <p className="text-xs text-gray-500">
+                  <code className="rounded bg-gray-100 px-1">render()</code> returns an icon
+                  alongside text using{' '}
+                  <code className="rounded bg-gray-100 px-1">flex items-center gap-1.5</code>. Used
+                  for wand.
+                </p>
+              </div>
+              <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
+                <p className="text-byu-navy text-sm font-semibold">Actions menu</p>
+                <p className="text-xs text-gray-500">
+                  Pass an <code className="rounded bg-gray-100 px-1">actions</code> array instead of{' '}
+                  <code className="rounded bg-gray-100 px-1">render()</code>. Each action gets a
+                  label, icon, and onClick.{' '}
+                  <code className="rounded bg-gray-100 px-1">variant: &apos;danger&apos;</code>{' '}
+                  renders in red.
+                </p>
+              </div>
+              <div className="space-y-1 rounded-lg border bg-gray-50 p-4">
+                <p className="text-byu-navy text-sm font-semibold">Expandable rows</p>
+                <p className="text-xs text-gray-500">
+                  Pass <code className="rounded bg-gray-100 px-1">expandableRows</code> to the
+                  DataTable with an inner column definition. The expand toggle only appears when{' '}
+                  <code className="rounded bg-gray-100 px-1">isExpandable</code> returns true.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Edit Modal — opens when Edit is clicked in the three-dot menu
+          {/* Edit Modal — opens when Edit is clicked in the three-dot menu
             Pre-fills with the current row values. submitDisabled blocks the button until required fields are filled. */}
-        <FormModal
-          open={Boolean(editRow)}
-          title="Edit Wizard"
-          onClose={() => setEditRow(null)}
-          values={editRowValues}
-          setValues={setEditRowValues}
-          submitDisabled={!isEditRowValid}
-          fields={[
-            { key: 'name', label: 'Wizard Name', required: true },
-            {
-              key: 'house',
-              label: 'House',
-              kind: 'select',
-              required: true,
-              options: [
-                { label: 'Gryffindor', value: 'Gryffindor' },
-                { label: 'Hufflepuff', value: 'Hufflepuff' },
-                { label: 'Slytherin', value: 'Slytherin' },
-                { label: 'Ravenclaw', value: 'Ravenclaw' },
-                { label: 'Beauxbatons', value: 'Beauxbatons' },
-                { label: 'Durmstrang', value: 'Durmstrang' },
-              ],
-            },
-            {
-              key: 'status',
-              label: 'Status',
-              kind: 'select',
-              options: [
-                { label: 'In Good Standing', value: 'IN_GOOD_STANDING' },
-                { label: 'On Probation', value: 'ON_PROBATION' },
-                { label: 'Banned', value: 'BANNED' },
-                { label: 'Inactive', value: 'INACTIVE' },
-              ],
-            },
-            {
-              key: 'role',
-              label: 'Role',
-              kind: 'radio',
-              required: true,
-              options: [
-                { label: 'Student', value: 'Student' },
-                { label: 'Order of the Phoenix', value: 'Order of the Phoenix' },
-                { label: 'Professor', value: 'Professor' },
-                { label: 'Death Eater', value: 'Death Eater' },
-              ],
-            },
-            { key: 'wand', label: 'Wand Type', required: true },
-          ]}
-          onSubmit={async () => {
-            try {
-              // In real dev: call your PUT route here
-              // await updateUser(editRow.id, editRowValues);
+          <FormModal
+            open={Boolean(editRow)}
+            title="Edit Wizard"
+            onClose={() => setEditRow(null)}
+            values={editRowValues}
+            setValues={setEditRowValues}
+            submitDisabled={!isEditRowValid}
+            fields={[
+              { key: 'name', label: 'Wizard Name', required: true },
+              {
+                key: 'house',
+                label: 'House',
+                kind: 'select',
+                required: true,
+                options: [
+                  { label: 'Gryffindor', value: 'Gryffindor' },
+                  { label: 'Hufflepuff', value: 'Hufflepuff' },
+                  { label: 'Slytherin', value: 'Slytherin' },
+                  { label: 'Ravenclaw', value: 'Ravenclaw' },
+                  { label: 'Beauxbatons', value: 'Beauxbatons' },
+                  { label: 'Durmstrang', value: 'Durmstrang' },
+                ],
+              },
+              {
+                key: 'status',
+                label: 'Status',
+                kind: 'select',
+                options: [
+                  { label: 'In Good Standing', value: 'IN_GOOD_STANDING' },
+                  { label: 'On Probation', value: 'ON_PROBATION' },
+                  { label: 'Banned', value: 'BANNED' },
+                  { label: 'Inactive', value: 'INACTIVE' },
+                ],
+              },
+              {
+                key: 'role',
+                label: 'Role',
+                kind: 'radio',
+                required: true,
+                options: [
+                  { label: 'Student', value: 'Student' },
+                  { label: 'Order of the Phoenix', value: 'Order of the Phoenix' },
+                  { label: 'Professor', value: 'Professor' },
+                  { label: 'Death Eater', value: 'Death Eater' },
+                ],
+              },
+              { key: 'wand', label: 'Wand Type', required: true },
+            ]}
+            onSubmit={async () => {
+              try {
+                // In real dev: call your PUT route here
+                // await updateUser(editRow.id, editRowValues);
 
-              showToast({
-                type: 'success',
-                title: 'Update successful',
-                message: 'Wizard information would be saved if the PUT endpoint existed.',
-              });
-              setEditRow(null);
+                showToast({
+                  type: 'success',
+                  title: 'Update successful',
+                  message: 'Wizard information would be saved if the PUT endpoint existed.',
+                });
+                setEditRow(null);
 
-              // After a mutation, the useEffect won't re-run automatically.
-              // The cleanest way to force a re-fetch is a refresh counter:
-              //   const [refreshKey, setRefreshKey] = useState(0);
-              //   setRefreshKey(k => k + 1);
-              // Then add refreshKey to the useEffect dependency array.
-            } catch (error) {
-              console.error('Update wizard failed:', error);
-              showToast({
-                type: 'error',
-                title: 'Update failed',
-                message: 'Wizard edit was unsuccessful. Please try again.',
-              });
-            }
-          }}
-        />
+                // After a mutation, the useEffect won't re-run automatically.
+                // The cleanest way to force a re-fetch is a refresh counter:
+                //   const [refreshKey, setRefreshKey] = useState(0);
+                //   setRefreshKey(k => k + 1);
+                // Then add refreshKey to the useEffect dependency array.
+              } catch (error) {
+                console.error('Update wizard failed:', error);
+                showToast({
+                  type: 'error',
+                  title: 'Update failed',
+                  message: 'Wizard edit was unsuccessful. Please try again.',
+                });
+              }
+            }}
+          />
 
-        {/* Delete Confirmation Modal — opens when Delete is clicked in the three-dot menu
+          {/* Delete Confirmation Modal — opens when Delete is clicked in the three-dot menu
             Shows the wizard name so the user knows exactly what they are deleting. */}
-        <ConfirmModal
-          open={Boolean(deleteTarget)}
-          title="Delete Wizard"
-          message={
-            <div className="space-y-2">
-              <p>
-                Are you sure you want to delete the record for{' '}
-                <span className="font-semibold">{deleteTarget?.name}</span>?
-              </p>
-              <p className="font-medium">This action cannot be undone.</p>
-              <p className="text-xs">Except this isn&apos;t actually real</p>
-            </div>
-          }
-          confirmLabel="Delete"
-          busyLabel="Deleting…"
-          busy={deletingRow}
-          variant="danger"
-          onCancel={() => setDeleteTarget(null)}
-          onConfirm={async () => {
-            setDeletingRow(true);
-            try {
-              // In real dev: call your DELETE route here
-              // await deleteUser(deleteTarget.id);
-
-              showToast({
-                type: 'success',
-                title: 'Wizard (not really) deleted',
-                message: `${deleteTarget?.name} would have been removed if the DELETE endpoint existed.`,
-              });
-              setDeleteTarget(null);
-
-              // Same refresh pattern as the edit modal
-              // setRefreshKey(k => k + 1);
-            } catch (error) {
-              console.error('Delete wizard failed:', error);
-              showToast({
-                type: 'error',
-                title: 'Delete failed',
-                message: 'Could not delete the wizard. Please try again.',
-              });
-            } finally {
-              setDeletingRow(false);
+          <ConfirmModal
+            open={Boolean(deleteTarget)}
+            title="Delete Wizard"
+            message={
+              <div className="space-y-2">
+                <p>
+                  Are you sure you want to delete the record for{' '}
+                  <span className="font-semibold">{deleteTarget?.name}</span>?
+                </p>
+                <p className="font-medium">This action cannot be undone.</p>
+                <p className="text-xs">Except this isn&apos;t actually real</p>
+              </div>
             }
-          }}
-        />
+            confirmLabel="Delete"
+            busyLabel="Deleting…"
+            busy={deletingRow}
+            variant="danger"
+            onCancel={() => setDeleteTarget(null)}
+            onConfirm={async () => {
+              setDeletingRow(true);
+              try {
+                // In real dev: call your DELETE route here
+                // await deleteUser(deleteTarget.id);
+
+                showToast({
+                  type: 'success',
+                  title: 'Wizard (not really) deleted',
+                  message: `${deleteTarget?.name} would have been removed if the DELETE endpoint existed.`,
+                });
+                setDeleteTarget(null);
+
+                // Same refresh pattern as the edit modal
+                // setRefreshKey(k => k + 1);
+              } catch (error) {
+                console.error('Delete wizard failed:', error);
+                showToast({
+                  type: 'error',
+                  title: 'Delete failed',
+                  message: 'Could not delete the wizard. Please try again.',
+                });
+              } finally {
+                setDeletingRow(false);
+              }
+            }}
+          />
+        </div>
       </div>
     </>
   );

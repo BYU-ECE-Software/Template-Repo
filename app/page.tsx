@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRole } from '@/app/providers/TestingRoleProvider';
+import { useRole } from '@/components/dev/TestingRoleProvider';
 
 export default function Home() {
   const { isAdmin } = useRole();

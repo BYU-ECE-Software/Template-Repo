@@ -83,7 +83,6 @@ type DroppableColumnProps<T extends BoardItem> = {
   columnClassName?: string;
   itemClassName?: string;
   dragWholeItem?: boolean;
-  activeId: UniqueIdentifier | null;
 };
 
 function DroppableColumn<T extends BoardItem>({
@@ -93,7 +92,6 @@ function DroppableColumn<T extends BoardItem>({
   columnClassName,
   itemClassName,
   dragWholeItem,
-  activeId,
 }: DroppableColumnProps<T>) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
 
@@ -117,7 +115,6 @@ function DroppableColumn<T extends BoardItem>({
             id={item.id}
             dragWholeItem={dragWholeItem}
             itemClassName={itemClassName}
-            isActiveItem={item.id === activeId}
           >
             {(dragHandleProps) => renderItem(item, dragHandleProps)}
           </SortableCardWrapper>
@@ -149,7 +146,6 @@ type SortableCardWrapperProps = {
   children: (dragHandleProps: React.HTMLAttributes<HTMLElement>) => ReactNode;
   dragWholeItem?: boolean;
   itemClassName?: string;
-  isActiveItem?: boolean;
 };
 
 function SortableCardWrapper({
@@ -157,7 +153,6 @@ function SortableCardWrapper({
   children,
   dragWholeItem,
   itemClassName,
-  isActiveItem,
 }: SortableCardWrapperProps) {
   const {
     attributes,
@@ -303,7 +298,6 @@ export default function DroppableBoard<T extends BoardItem>({
               columnClassName={columnClassName}
               itemClassName={itemClassName}
               dragWholeItem={dragWholeItem}
-              activeId={activeId}
             />
           </div>
         ))}

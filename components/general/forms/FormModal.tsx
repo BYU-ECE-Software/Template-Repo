@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import BaseModal from '@/components/general/overlays/BaseModal';
 import FilePicker from '@/components/general/forms/FilePicker';
 import FieldWrapper from '@/components/general/forms/FieldWrapper';
@@ -8,7 +8,11 @@ import SelectField from '@/components/general/forms/SelectField';
 import RadioGroupField from '@/components/general/forms/RadioGroupField';
 import TextLikeField from '@/components/general/forms/TextLikeField';
 import PinField from '@/components/general/forms/PinField';
+import CheckboxField from '@/components/general/forms/CheckboxField';
+import Combobox from '@/components/general/forms/Combobox';
 import type {
+  CheckboxField as CheckboxFieldType,
+  ComboboxField as ComboboxFieldType,
   CustomField,
   InputField,
   RadioField,
@@ -18,10 +22,16 @@ import type {
 // Modal sizing options passed straight through to BaseModal
 type ModalSize = 'sm' | 'md' | 'lg';
 
-export type FormModalField = InputField | SelectFieldType | RadioField | CustomField;
+export type FormModalField =
+  | InputField
+  | SelectFieldType
+  | RadioField
+  | CheckboxFieldType
+  | ComboboxFieldType
+  | CustomField;
 
 // Props for the FormModal component
-type FormModalProps<T extends Record<string, any>> = {
+type FormModalProps<T extends Record<string, unknown>> = {
   open: boolean;
   title: string;
   size?: ModalSize;
@@ -39,7 +49,7 @@ type FormModalProps<T extends Record<string, any>> = {
   errors?: Partial<Record<keyof T, string>>; // key matches the field key, value is the error message
 };
 
-export default function FormModal<T extends Record<string, any>>({
+export default function FormModal<T extends Record<string, unknown>>({
   open,
   title,
   size = 'lg',
@@ -53,8 +63,8 @@ export default function FormModal<T extends Record<string, any>>({
   fields,
   errors,
 }: FormModalProps<T>) {
-  const setFieldValue = (key: string, value: any) => {
-    setValues({ ...values, [key]: value });
+  const setFieldValue = (key: string, value: unknown) => {
+    setValues({ ...values, [key]: value } as T);
   };
 
   // Whether to show or hide a pin
@@ -87,7 +97,10 @@ export default function FormModal<T extends Record<string, any>>({
             );
           }
 
-          const value = values[field.key] ?? '';
+          // Each `kind` branch below casts the value to the shape its input expects.
+          // FormModal is generic over arbitrary value shapes, so this layer trusts
+          // the consumer to put the right type under each field key.
+          const rawValue = values[field.key];
           const errorText = errors?.[field.key as keyof T];
 
           // Renders the correct input component based on the field's kind and type
@@ -102,7 +115,7 @@ export default function FormModal<T extends Record<string, any>>({
             >
               {field.kind === 'select' ? (
                 <SelectField
-                  value={value}
+                  value={(rawValue as string) ?? ''}
                   onChange={(nextValue) => setFieldValue(field.key, nextValue)}
                   options={field.options}
                   placeholder={field.placeholder}
@@ -110,15 +123,31 @@ export default function FormModal<T extends Record<string, any>>({
               ) : field.kind === 'radio' ? (
                 <RadioGroupField
                   name={field.key}
-                  value={value}
+                  value={rawValue as string | number | boolean}
                   onChange={(nextValue) => setFieldValue(field.key, nextValue)}
                   options={field.options}
+                />
+              ) : field.kind === 'checkbox' ? (
+                <CheckboxField
+                  checked={Boolean(rawValue)}
+                  onChange={(nextValue) => setFieldValue(field.key, nextValue)}
+                />
+              ) : field.kind === 'combobox' ? (
+                <Combobox
+                  items={field.items}
+                  value={
+                    rawValue && typeof rawValue === 'object' && 'id' in rawValue && 'name' in rawValue
+                      ? (rawValue as { id: string; name: string })
+                      : { id: '', name: '' }
+                  }
+                  onChange={(nextValue) => setFieldValue(field.key, nextValue)}
+                  placeholder={field.placeholder}
                 />
               ) : field.type === 'textarea' ? (
                 <TextLikeField
                   as="textarea"
                   rows={3}
-                  value={value}
+                  value={(rawValue as string | number) ?? ''}
                   onChange={(nextValue) => setFieldValue(field.key, nextValue)}
                   placeholder={field.placeholder}
                   adornment={field.adornment}
@@ -126,7 +155,7 @@ export default function FormModal<T extends Record<string, any>>({
                 />
               ) : field.type === 'pin' ? (
                 <PinField
-                  value={value}
+                  value={(rawValue as string) ?? ''}
                   onChange={(nextValue) => setFieldValue(field.key, nextValue)}
                   visible={isPinVisible(field.key)}
                   onToggleVisible={() => togglePinVisible(field.key)}
@@ -135,7 +164,7 @@ export default function FormModal<T extends Record<string, any>>({
                 />
               ) : field.type === 'file' ? (
                 <FilePicker
-                  value={value}
+                  value={rawValue as File | null}
                   accept={field.accept}
                   onChange={(file) => setFieldValue(field.key, file)}
                 />
@@ -143,7 +172,7 @@ export default function FormModal<T extends Record<string, any>>({
                 <TextLikeField
                   as="input"
                   type={field.type ?? 'text'}
-                  value={value}
+                  value={(rawValue as string | number) ?? ''}
                   onChange={(nextValue) => setFieldValue(field.key, nextValue)}
                   placeholder={field.placeholder}
                   adornment={field.adornment}

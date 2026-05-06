@@ -9,6 +9,8 @@ type ExtendedUser = User & {
 };
 
 export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL,
+  secret: process.env.BETTER_AUTH_SECRET,
   session: {
     cookieCache: {
       enabled: true,
@@ -32,7 +34,7 @@ export const auth = betterAuth({
       jwt: {
         expirationTime: 1 * 24 * 60 * 60, // 1 day
       },
-      generatePayload: async ({ user, session }: { user: ExtendedUser; session: Session }) => {
+      generatePayload: async ({ user, session: _session }: { user: ExtendedUser; session: Session }) => {
         // Call GRO here at token generation time
         // const adminFlags = await fetchGroAdminFlags(user.email);
 

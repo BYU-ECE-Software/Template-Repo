@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { minioClient, SAMPLE_IMAGES_BUCKET } from '@/lib/minioClient';
+import { minioClient, SAMPLE_IMAGES_BUCKET } from '@/lib/minio/client';
 import { randomUUID } from 'crypto';
 
 export const runtime = 'nodejs';
@@ -44,8 +44,9 @@ export async function POST(req: Request) {
     );
 
     return NextResponse.json({ link: objectName }, { status: 201 });
-  } catch (err: any) {
+  } catch (err) {
     console.error('Upload failed:', err);
-    return NextResponse.json({ error: err?.message ?? 'Upload failed' }, { status: 500 });
+    const message = err instanceof Error ? err.message : 'Upload failed';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

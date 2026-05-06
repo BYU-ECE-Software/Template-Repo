@@ -163,6 +163,7 @@ export default function ModalsPage() {
           onSubmit={() => {
             if (!validateForm()) return;
 
+            // eslint-disable-next-line no-console
             console.log(formValues);
             setFormOpen(false);
           }}

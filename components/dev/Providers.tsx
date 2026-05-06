@@ -1,10 +1,12 @@
-// layers all of the providers in one file so the layout.tsx file doesn't get cluttered
+// Layers all of the dev providers in one component so the layout file
+// doesn't get cluttered. Replace with your real provider stack before
+// shipping.
 
 'use client';
 
 import type { ReactNode } from 'react';
-import { TestAuthProvider } from './providers/TestingAuthProvider';
-import { TestRoleProvider, type AppRole } from './providers/TestingRoleProvider';
+import { TestAuthProvider } from './TestingAuthProvider';
+import { TestRoleProvider, type AppRole } from './TestingRoleProvider';
 
 type ProvidersProps = {
   children: ReactNode;

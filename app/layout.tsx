@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import Header from '../components/general/layout/Header';
 import Footer from '../components/general/layout/Footer';
-import Providers from './providers';
+import Providers from '@/components/dev/Providers';
 
 export const metadata: Metadata = {
   title: 'ECE Template Repo',
@@ -23,6 +23,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap"
           rel="stylesheet"

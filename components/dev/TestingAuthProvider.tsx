@@ -1,7 +1,8 @@
-// Test code for authentication
-// Someone who is authenticated is considered "signed in"
-// This provider controls the look of the sign in button
-// nothing else besides the look of the sign in/sign out button is controlled by this provider currently
+// Test code for authentication.
+// Someone who is authenticated is considered "signed in".
+// This provider controls the look of the sign in button — nothing else
+// besides the sign-in/sign-out button look is currently controlled here.
+// Replace with your real auth integration before shipping.
 
 'use client';
 

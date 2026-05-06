@@ -2,13 +2,12 @@
 'use client';
 
 import Image from 'next/image';
-import { authClient } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth/client';
 
 export default function HomeClient() {
   const handleSignIn = async () => {
-    console.log('Signing in with Okta...');
     try {
-      const res = await authClient.signIn.oauth2(
+      await authClient.signIn.oauth2(
         {
           providerId: 'okta',
           callbackURL: '/protected',

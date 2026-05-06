@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRole } from '@/app/providers/TestingRoleProvider';
+import { useRole } from '@/components/dev/TestingRoleProvider';
 import { useRouter } from 'next/navigation';
 
 export default function AdminOnly() {

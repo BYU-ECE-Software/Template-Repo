@@ -16,6 +16,11 @@ export type RadioOption = {
   value: string | number | boolean; // supports Yes/No booleans, numeric codes, or string values
 };
 
+export type ComboboxItem = {
+  id: string;
+  name: string;
+};
+
 // All field types share these base properties
 export type BaseField = {
   key: string; // must match the key in your form values object
@@ -46,22 +51,34 @@ export type RadioField = BaseField & {
   options: RadioOption[];
 };
 
-// Custom fields let you render anything inside the form grid
-export type CustomField<TItem = any> = {
+export type CheckboxField = BaseField & {
+  kind: 'checkbox';
+};
+
+export type ComboboxField = BaseField & {
+  kind: 'combobox';
+  items: ComboboxItem[];
+};
+
+// Custom fields let you render anything inside the form grid.
+// Custom renderers narrow `value` themselves — they own the field's value shape.
+export type CustomField<TItem = unknown> = {
   kind: 'custom';
   key: string;
   colSpan?: 1 | 2;
   render: (args?: {
-    value?: any;
-    setValue?: (value: any) => void;
+    value?: unknown;
+    setValue?: (value: unknown) => void;
     item?: TItem;
     itemIndex?: number;
   }) => ReactNode;
 };
 
 // Union of all supported field types — used by FormModal and FullPageForm
-export type SharedFormField<TItem = any> =
+export type SharedFormField<TItem = unknown> =
   | InputField
   | SelectField
   | RadioField
+  | CheckboxField
+  | ComboboxField
   | CustomField<TItem>;

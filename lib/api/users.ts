@@ -16,7 +16,7 @@
 // These should match what the route returns — update them when the route changes.
 // In real dev: replace these with types that match your actual schema.
 
-type Spell = {
+export type Spell = {
   id: number;
   name: string;
   type: string;

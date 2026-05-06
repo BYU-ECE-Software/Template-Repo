@@ -3,8 +3,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { FiChevronDown } from 'react-icons/fi';
-import SignInSignOut from '../auth/SignInSignOut';
-import { useRole } from '@/app/providers/TestingRoleProvider';
+import SignInSignOut from '@/components/dev/SignInSignOut';
+import { useRole } from '@/components/dev/TestingRoleProvider';
 
 type NavBarProps = {
   navPadLeft?: number;
@@ -88,7 +88,7 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
-  }, []);
+  }, [setMobileOpen]);
 
   // ******* There is code for the mobile view of the nav bar and the desktop view. If you had a tab to the nav bar, make sure you add it to both mobile and desktop ********
 

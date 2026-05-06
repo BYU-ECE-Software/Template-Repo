@@ -65,11 +65,7 @@ export default function ExampleFullPageFormDemo() {
   };
 
   //Update one field inside a repeater item.
-  const handleSetItemValue = (
-    index: number,
-    key: string,
-    value: string | number | File | boolean | null,
-  ) => {
+  const handleSetItemValue = (index: number, key: string, value: unknown) => {
     setItems((prev) =>
       prev.map((item, itemIndex) => (itemIndex === index ? { ...item, [key]: value } : item)),
     );
