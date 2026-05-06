@@ -37,13 +37,13 @@ import { useToast } from '@/hooks/useToast';
 
 export interface DrillConfig<
   T extends { id: string },
-  CreatePayload extends Record<string, any> = Partial<T>,
+  CreatePayload extends Record<string, unknown> = Partial<T>,
 > {
   /** Singular noun for UI copy ("Class", "Room"). */
   noun: string;
 
   /** Columns shown in the list table. Drill arrow is appended automatically. */
-  columns: DataTableColumn[];
+  columns: DataTableColumn<T>[];
 
   /** Fields for the inline edit section. Same shape FormModal consumes, so
    *  input/select/radio/checkbox/combobox/custom kinds all work. */
@@ -63,7 +63,7 @@ export interface DrillConfig<
   };
 }
 
-interface Props<T extends { id: string }, CreatePayload extends Record<string, any>> {
+interface Props<T extends { id: string }, CreatePayload extends Record<string, unknown>> {
   title: string;
   config: DrillConfig<T, CreatePayload>;
   /** Custom config panel rendered below the inline-form fields in the drill view. */
@@ -93,7 +93,7 @@ type Mode = 'list' | 'create' | 'edit';
 
 export default function AdminDrillPanel<
   T extends { id: string },
-  CreatePayload extends Record<string, any>,
+  CreatePayload extends Record<string, unknown>,
 >({
   title,
   config,
@@ -115,7 +115,7 @@ export default function AdminDrillPanel<
 
   const formDirty = config.fields.some((f) => {
     if ('kind' in f && f.kind === 'custom') return false;
-    return (editValues as Record<string, any>)[f.key] !== (formSnapshot as Record<string, any>)[f.key];
+    return (editValues as Record<string, unknown>)[f.key] !== (formSnapshot as Record<string, unknown>)[f.key];
   });
   const dirty = formDirty || childDirty;
 
@@ -202,7 +202,7 @@ export default function AdminDrillPanel<
           const patchPayload = Object.fromEntries(
             config.fields
               .filter((f) => !('kind' in f && f.kind === 'custom'))
-              .map((f) => [f.key, (editValues as Record<string, any>)[f.key]]),
+              .map((f) => [f.key, (editValues as Record<string, unknown>)[f.key]]),
           ) as Partial<CreatePayload>;
           savedItem = await config.api.update(selectedItem.id, patchPayload);
         }
@@ -257,7 +257,7 @@ export default function AdminDrillPanel<
   const togglePinVisible = (key: string) =>
     setPinVisible((p) => ({ ...p, [key]: !p[key] }));
 
-  const columnsWithArrow: DataTableColumn[] = [
+  const columnsWithArrow: DataTableColumn<T>[] = [
     ...config.columns,
     {
       key: '__drill',
@@ -290,7 +290,7 @@ export default function AdminDrillPanel<
                 );
               }
 
-              const value = (editValues as Record<string, any>)[field.key] ?? '';
+              const value = (editValues as Record<string, unknown>)[field.key] ?? '';
 
               return (
                 <FieldWrapper
@@ -302,7 +302,7 @@ export default function AdminDrillPanel<
                 >
                   {field.kind === 'select' ? (
                     <SelectField
-                      value={value}
+                      value={value as string}
                       onChange={(next) => setFieldValue(field.key, next)}
                       options={field.options}
                       placeholder={field.placeholder}
@@ -310,7 +310,7 @@ export default function AdminDrillPanel<
                   ) : field.kind === 'radio' ? (
                     <RadioGroupField
                       name={field.key}
-                      value={value}
+                      value={value as string | number | boolean}
                       onChange={(next) => setFieldValue(field.key, next)}
                       options={field.options}
                     />
@@ -323,8 +323,8 @@ export default function AdminDrillPanel<
                     <Combobox
                       items={field.items}
                       value={
-                        value && typeof value === 'object' && 'id' in value
-                          ? value
+                        value && typeof value === 'object' && 'id' in value && 'name' in value
+                          ? (value as { id: string; name: string })
                           : { id: '', name: '' }
                       }
                       onChange={(next) => setFieldValue(field.key, next)}
@@ -334,7 +334,7 @@ export default function AdminDrillPanel<
                     <TextLikeField
                       as="textarea"
                       rows={3}
-                      value={value}
+                      value={value as string | number}
                       onChange={(next) => setFieldValue(field.key, next)}
                       placeholder={field.placeholder}
                       adornment={field.adornment}
@@ -342,7 +342,7 @@ export default function AdminDrillPanel<
                     />
                   ) : field.type === 'pin' ? (
                     <PinField
-                      value={value}
+                      value={value as string}
                       onChange={(next) => setFieldValue(field.key, next)}
                       visible={Boolean(pinVisible[field.key])}
                       onToggleVisible={() => togglePinVisible(field.key)}
@@ -351,7 +351,7 @@ export default function AdminDrillPanel<
                     />
                   ) : field.type === 'file' ? (
                     <FilePicker
-                      value={value}
+                      value={value as File | null}
                       accept={field.accept}
                       onChange={(file) => setFieldValue(field.key, file)}
                     />
@@ -359,7 +359,7 @@ export default function AdminDrillPanel<
                     <TextLikeField
                       as="input"
                       type={field.type ?? 'text'}
-                      value={value}
+                      value={value as string | number}
                       onChange={(next) => setFieldValue(field.key, next)}
                       placeholder={field.placeholder}
                       adornment={field.adornment}

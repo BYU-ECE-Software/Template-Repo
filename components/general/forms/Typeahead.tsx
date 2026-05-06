@@ -78,7 +78,7 @@ export default function Typeahead<T>({
 
   // Fetch results when debounced search changes. setResults / setLoading
   // inside an effect is the right shape for fetch-on-key.
-  /* eslint-disable react-hooks/set-state-in-effect */
+   
   useEffect(() => {
     if (!debouncedSearch) {
       setResults([]);
@@ -100,7 +100,7 @@ export default function Typeahead<T>({
 
     fetchResults();
   }, [debouncedSearch, fetchItems]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+   
 
   // Reset highlighted index when results change — using prev-render snapshot
   // pattern instead of an effect to avoid an extra render cycle.

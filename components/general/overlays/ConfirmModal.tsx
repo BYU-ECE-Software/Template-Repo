@@ -52,12 +52,6 @@ export default function ConfirmModal({
   icon,
   children,
 }: ConfirmModalProps) {
-  // Determines styling for confirm button based on intent
-  const confirmBtnClass =
-    variant === 'danger'
-      ? 'bg-red-600 hover:brightness-95 active:brightness-90'
-      : 'bg-byu-royal enabled:hover:bg-[#003C9E]';
-
   return (
     <BaseModal
       open={open}

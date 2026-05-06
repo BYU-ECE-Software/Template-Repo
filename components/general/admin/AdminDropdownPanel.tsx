@@ -89,11 +89,11 @@ export default function AdminDropdownPanel({
   }, [fetchItems, noun]);
 
   // setLoading inside load() is the right pattern for fetch-on-mount.
-  /* eslint-disable react-hooks/set-state-in-effect */
+   
   useEffect(() => {
     load();
   }, [load]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+   
 
   // Focus the inline edit input as soon as editing starts
   useEffect(() => {

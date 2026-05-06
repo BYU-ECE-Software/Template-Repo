@@ -6,90 +6,113 @@ import RowActionMenu from '@/components/general/overlays/RowActionMenu';
 import { FiMoreVertical, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import React from 'react';
 
-// Column definition — key must match the data object's field name
-export type DataTableColumn = {
+// Column definition — `key` should match a field on TRow for default rendering,
+// but synthetic keys (e.g. '__actions') are also allowed when `actions` or
+// `render` is provided. Pass TRow to get typed `row` params in render/actions.
+export type DataTableColumn<TRow = unknown> = {
   key: string;
   header: string;
   headerClassName?: string;
   cellClassName?: string;
-  render?: (row: any) => ReactNode;
+  render?: (row: TRow) => ReactNode;
   noWrap?: boolean;
-  actions?: DataTableAction[];
+  actions?: DataTableAction<TRow>[];
   sortable?: boolean; // adds an asc/desc toggle to this column's header
 };
 
 // A single item in the three-dot action menu
-export type DataTableAction = {
+export type DataTableAction<TRow = unknown> = {
   label: string;
   icon?: ReactNode;
-  onClick: (row: any) => void;
+  onClick: (row: TRow) => void;
   variant?: 'default' | 'danger';
-  hidden?: (row: any) => boolean;
-  disabled?: (row: any) => boolean;
+  hidden?: (row: TRow) => boolean;
+  disabled?: (row: TRow) => boolean;
 };
 
 // Expanded Portion of a row Column definition — key must match the data object's field name
-export type ExpandedTableColumn = {
+export type ExpandedTableColumn<TRow = unknown> = {
   key: string;
   header: string;
-  render?: (row: any) => ReactNode;
-  actions?: DataTableAction[];
+  render?: (row: TRow) => ReactNode;
+  actions?: DataTableAction<TRow>[];
 };
 
-export type ExpandedTableConfig = {
+export type ExpandedTableConfig<TParent = unknown, TChild = unknown> = {
   /** Column definitions for the sub-table */
-  columns: ExpandedTableColumn[];
+  columns: ExpandedTableColumn<TChild>[];
   /** How to get the rows from the parent row */
-  getRows?: (row: any) => any[];
+  getRows?: (row: TParent) => TChild[];
   /** Called while rows are loading — pass if rows are fetched async */
-  fetchRows?: (row: any) => Promise<any[]>;
+  fetchRows?: (row: TParent) => Promise<TChild[]>;
   /** Grid template columns CSS value e.g. "200px 1.5fr 1fr 1fr 2fr" */
   gridCols: string;
   /** Summary text at the bottom e.g. (rows) => `${rows.length} receipts attached` */
-  summary?: (rows: any[]) => string;
+  summary?: (rows: TChild[]) => string;
   refreshKey?: number;
 };
 
-export type ExpandableRowsConfig = {
+export type ExpandableRowsConfig<TParent = unknown, TChild = unknown> = {
   /** Return true if this row should show an expand toggle */
-  isExpandable: (row: any) => boolean;
+  isExpandable: (row: TParent) => boolean;
   /** The content rendered inside the expanded panel */
-  expandedTable: ExpandedTableConfig;
+  expandedTable: ExpandedTableConfig<TParent, TChild>;
 };
 
-type DataTableProps = {
-  data: any[];
+type DataTableProps<TRow, TChild = unknown> = {
+  data: TRow[];
   loading?: boolean;
   emptyMessage?: string;
-  columns: DataTableColumn[];
-  getRowKey?: (row: any, index: number) => React.Key;
+  columns: DataTableColumn<TRow>[];
+  getRowKey?: (row: TRow, index: number) => React.Key;
   containerClassName?: string;
   // Optional expandable row configuration
-  expandableRows?: ExpandableRowsConfig;
+  expandableRows?: ExpandableRowsConfig<TRow, TChild>;
   // sort props — only pass these if any column has sortable: true
   sortKey?: string;
   sortDir?: 'asc' | 'desc';
   onSort?: (key: string, dir: 'asc' | 'desc') => void;
   /** Click anywhere on a row to trigger this. Action cells stop propagation so the menu still works. */
-  onRowClick?: (row: any) => void;
+  onRowClick?: (row: TRow) => void;
 };
 
+// Helper: read an arbitrary string key off a row when the column key is
+// a runtime field name. Used for default cell rendering when `render` is absent.
+function readField(row: unknown, key: string): ReactNode {
+  return (row as Record<string, ReactNode>)[key];
+}
+
+// Helper: try to read an `id` for row-keying. Falls back to the row index.
+function rowIdOrIndex(row: unknown, index: number): React.Key {
+  const id = (row as { id?: React.Key }).id;
+  return id ?? index;
+}
+
 // Renders the inner table that appears when a row is expanded
-function ExpandedSubTable({ parentRow, config }: { parentRow: any; config: ExpandedTableConfig }) {
-  const [rows, setRows] = useState<any[]>(() => (config.getRows ? config.getRows(parentRow) : []));
+function ExpandedSubTable<TParent, TChild>({
+  parentRow,
+  config,
+}: {
+  parentRow: TParent;
+  config: ExpandedTableConfig<TParent, TChild>;
+}) {
+  const [rows, setRows] = useState<TChild[]>(() => (config.getRows ? config.getRows(parentRow) : []));
   const [loading, setLoading] = useState(Boolean(config.fetchRows));
 
   // If fetchRows is provided, load the sub-rows asynchronously from the API
+  const parentId = (parentRow as { id?: React.Key }).id;
   useEffect(() => {
     if (!config.fetchRows) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     config
       .fetchRows(parentRow)
       .then(setRows)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [parentRow.id, config.refreshKey]);
+    // Re-fetch on parent identity (via id) or explicit refresh signal — depending
+    // on `parentRow` or `config` directly would re-run on unrelated re-renders.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parentId, config.refreshKey]);
 
   if (loading) return <p className="py-3 text-xs text-gray-400">Loading…</p>;
 
@@ -112,7 +135,7 @@ function ExpandedSubTable({ parentRow, config }: { parentRow: any; config: Expan
       <div className="divide-y divide-gray-100">
         {rows.map((row, i) => (
           <div
-            key={row.id ?? i}
+            key={rowIdOrIndex(row, i)}
             className="grid items-center gap-x-6 rounded-lg py-2.5 text-sm transition-colors hover:bg-white/70"
             style={{ gridTemplateColumns: gridCols }}
           >
@@ -135,7 +158,7 @@ function ExpandedSubTable({ parentRow, config }: { parentRow: any; config: Expan
               ) : col.render ? (
                 <span key={col.key}>{col.render(row)}</span>
               ) : (
-                <span key={col.key}>{row[col.key]}</span>
+                <span key={col.key}>{readField(row, col.key)}</span>
               ),
             )}
           </div>
@@ -149,7 +172,7 @@ function ExpandedSubTable({ parentRow, config }: { parentRow: any; config: Expan
   );
 }
 
-export default function DataTable({
+export default function DataTable<TRow, TChild = unknown>({
   data,
   loading = false,
   emptyMessage = 'No records found.',
@@ -161,14 +184,15 @@ export default function DataTable({
   sortDir = 'asc',
   onSort,
   onRowClick,
-}: DataTableProps) {
+}: DataTableProps<TRow, TChild>) {
   // Tracks which rows are currently expanded
   const [expandedRows, setExpandedRows] = useState<Set<React.Key>>(new Set());
 
   const toggleRow = (key: React.Key) => {
     setExpandedRows((prev) => {
       const next = new Set(prev);
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   };
@@ -247,7 +271,7 @@ export default function DataTable({
 
             <tbody>
               {data.map((row, rowIndex) => {
-                const key = getRowKey ? getRowKey(row, rowIndex) : (row.id ?? rowIndex);
+                const key = getRowKey ? getRowKey(row, rowIndex) : rowIdOrIndex(row, rowIndex);
                 const isExpanded = expandedRows.has(key);
                 const canExpand = expandableRows?.isExpandable(row) ?? false;
 
@@ -308,7 +332,7 @@ export default function DataTable({
                           ) : col.render ? (
                             col.render(row)
                           ) : (
-                            row[col.key]
+                            readField(row, col.key)
                           )}
                         </td>
                       ))}
@@ -316,7 +340,7 @@ export default function DataTable({
 
                     {/* Expanded sub-row — renders below the parent row when toggled open */}
                     {expandableRows && canExpand && isExpanded && (
-                      <tr key={`${key}-expanded`} className="transition-all">
+                      <tr key={`${String(key)}-expanded`} className="transition-all">
                         <td colSpan={totalCols} className="bg-slate-50">
                           <div className="origin-top translate-y-0 opacity-100 transition-all duration-300">
                             <div className="border-byu-royal/40 mt-3 mr-6 mb-4 ml-15 border-l-2 pl-4">

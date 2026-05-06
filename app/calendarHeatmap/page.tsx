@@ -38,6 +38,8 @@ const PRESET_LABELS: Record<HeatmapPreset, string> = {
 export default function HeatmapDemoPage() {
   const [values, setValues] = useState<HeatmapValue[]>([]);
   useEffect(() => {
+    // Random data is generated client-side to avoid SSR hydration mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setValues(randomValues(365));
   }, []);
 
@@ -70,7 +72,7 @@ export default function HeatmapDemoPage() {
             <div className="space-y-2 rounded-xl border bg-white p-6 text-center shadow-md">
               <h2 className="text-byu-navy text-lg font-semibold">Color Theme</h2>
               <p className="mb-3 text-sm text-gray-600">
-                Built-in presets — pass preset="byu" etc.
+                Built-in presets — pass preset=&quot;byu&quot; etc.
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {(Object.keys(PRESET_LABELS) as HeatmapPreset[]).map((key) => (

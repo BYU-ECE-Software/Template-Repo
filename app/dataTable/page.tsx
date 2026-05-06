@@ -25,7 +25,7 @@ import ConfirmModal from '@/components/general/overlays/ConfirmModal';
 import { useToast } from '@/hooks/useToast';
 import FormModal from '@/components/general/forms/FormModal';
 import { useRole } from '@/components/dev/TestingRoleProvider';
-import { getUsers, type User } from '@/lib/api/users';
+import { getUsers, type User, type Spell } from '@/lib/api/users';
 
 export default function DataTableDemo() {
   const { isAdmin } = useRole();
@@ -96,7 +96,7 @@ export default function DataTableDemo() {
   // editRow holds the full row object so we know which record is being edited.
   // editRowValues holds the current form field values inside the edit modal.
   // In real dev: update the type to match the shape of your own data.
-  const [editRow, setEditRow] = useState<any | null>(null);
+  const [editRow, setEditRow] = useState<User | null>(null);
   const [editRowValues, setEditRowValues] = useState<{
     name: string;
     house: string;
@@ -120,7 +120,7 @@ export default function DataTableDemo() {
 
   // ── Delete Row State ──────────────────────────────────────────────────────
   // deleteTarget holds the row being deleted so we can show the name in the confirm modal
-  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
   const [deletingRow, setDeletingRow] = useState(false);
 
   // ── Toast ─────────────────────────────────────────────────────────────────
@@ -140,7 +140,7 @@ export default function DataTableDemo() {
   // key must match the field name in your data object.
   // render() lets you return custom JSX instead of plain text.
   // sortable: true adds asc/desc arrows to the header.
-  const columns: DataTableColumn[] = [
+  const columns: DataTableColumn<User>[] = [
     // Plain text column — no render needed, key renders the value directly
     {
       key: 'name',
@@ -203,7 +203,7 @@ export default function DataTableDemo() {
     // Wrapping in isAdmin hides the entire column from non-admin users.
     // In real dev: remove the isAdmin check if all users should have access, or swap in your own auth check
     ...(isAdmin
-      ? [
+      ? ([
           {
             key: 'actions',
             header: '',
@@ -211,12 +211,16 @@ export default function DataTableDemo() {
               {
                 label: 'Edit',
                 icon: <FiEdit2 className="h-4 w-4" />,
-                onClick: (row: any) => {
+                onClick: (row) => {
                   // Pre-fill the edit form with the current row values before opening the modal
                   setEditRowValues({
                     name: row.name,
                     house: row.house,
-                    status: row.status,
+                    status: row.status as
+                      | 'IN_GOOD_STANDING'
+                      | 'ON_PROBATION'
+                      | 'BANNED'
+                      | 'INACTIVE',
                     role: row.role,
                     wand: row.wand,
                   });
@@ -227,11 +231,11 @@ export default function DataTableDemo() {
                 label: 'Delete',
                 icon: <FiTrash2 className="h-4 w-4" />,
                 variant: 'danger' as const, // renders this menu item in red
-                onClick: (row: any) => setDeleteTarget(row),
+                onClick: (row) => setDeleteTarget(row),
               },
             ],
           },
-        ]
+        ] satisfies DataTableColumn<User>[])
       : []),
   ];
 
@@ -240,7 +244,7 @@ export default function DataTableDemo() {
   // isExpandable controls which rows get the expand toggle — rows that return false won't show one.
   // expandedTable defines the inner table that appears when a row is expanded.
   // In real dev: use this for one-to-many relationships (e.g. a user with many orders)
-  const expandableRows: ExpandableRowsConfig = {
+  const expandableRows: ExpandableRowsConfig<User, Spell> = {
     isExpandable: (row) => row.spells.length > 0,
 
     expandedTable: {
@@ -439,7 +443,8 @@ export default function DataTableDemo() {
                 Pass an <code className="rounded bg-gray-100 px-1">actions</code> array instead of{' '}
                 <code className="rounded bg-gray-100 px-1">render()</code>. Each action gets a
                 label, icon, and onClick.{' '}
-                <code className="rounded bg-gray-100 px-1">variant: 'danger'</code> renders in red.
+                <code className="rounded bg-gray-100 px-1">variant: &apos;danger&apos;</code>{' '}
+                renders in red.
               </p>
             </div>
             <div className="space-y-1 rounded-lg border bg-gray-50 p-4">

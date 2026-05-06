@@ -57,7 +57,6 @@ export type SortableListProps<T extends SortableItem> = {
 type SortableItemWrapperProps = {
   id: UniqueIdentifier;
   children: (dragHandleProps: React.HTMLAttributes<HTMLElement>) => ReactNode;
-  isDragging?: boolean;
   dragWholeItem?: boolean;
   itemClassName?: string;
 };
@@ -65,7 +64,6 @@ type SortableItemWrapperProps = {
 function SortableItemWrapper({
   id,
   children,
-  isDragging,
   dragWholeItem,
   itemClassName,
 }: SortableItemWrapperProps) {

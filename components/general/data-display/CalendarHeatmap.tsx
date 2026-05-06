@@ -74,7 +74,7 @@ export default function CalendarHeatmap({
   // colors prop takes priority over preset
   const resolvedColors = colors ?? PRESETS[preset];
 
-  const end = endDate ?? new Date();
+  const end = useMemo(() => endDate ?? new Date(), [endDate]);
   const start = useMemo(() => {
     if (startDate) return startDate;
     const d = new Date(end);

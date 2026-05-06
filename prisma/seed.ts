@@ -1,3 +1,6 @@
+// Seed script — console.log is the script's UI.
+/* eslint-disable no-console */
+
 import { PrismaClient, Role, Status, SpellType } from '@prisma/client';
 
 const prisma = new PrismaClient();

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { FiTrash2 } from 'react-icons/fi';
 import Button from '@/components/general/actions/Button';
 import FilePicker from '@/components/general/forms/FilePicker';
@@ -36,23 +36,23 @@ type RepeaterSection<TItem> = {
   items: TItem[];
   onAdd: () => void;
   onRemove: (index: number) => void;
-  getItemValue: (item: TItem, key: string) => any;
-  setItemValue: (index: number, key: string, value: any) => void;
+  getItemValue: (item: TItem, key: string) => unknown;
+  setItemValue: (index: number, key: string, value: unknown) => void;
   fields: FullPageFormField<TItem>[];
   emptyMessage?: string;
 };
 
-export type FullPageFormField<TItem = any> =
+export type FullPageFormField<TItem = unknown> =
   | InputField
   | SelectFieldType
   | RadioField
   | CustomField<TItem>;
 
-export type FullPageFormSection<TValues, TRepeaterItem = any> =
+export type FullPageFormSection<TValues, TRepeaterItem = unknown> =
   | StandardSection<TValues>
   | RepeaterSection<TRepeaterItem>;
 
-type FullPageFormProps<TValues, TRepeaterItem = any> = {
+type FullPageFormProps<TValues, TRepeaterItem = unknown> = {
   title?: string;
   intro?: string;
   values: TValues;
@@ -69,7 +69,10 @@ const SECTION_TITLE_CLASS = 'text-2xl font-semibold text-byu-navy';
 const SECTION_DESC_CLASS = 'text-sm text-gray-600 mt-1';
 const BOX_CLASS = 'border border-gray-300 rounded-md p-4 space-y-6 bg-white shadow-sm';
 
-export default function FullPageForm<TValues extends Record<string, any>, TRepeaterItem = any>({
+export default function FullPageForm<
+  TValues extends Record<string, unknown>,
+  TRepeaterItem = unknown,
+>({
   title,
   intro,
   values,
@@ -83,8 +86,8 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
 }: FullPageFormProps<TValues, TRepeaterItem>) {
   const [pinVisible, setPinVisible] = useState<Record<string, boolean>>({});
 
-  const setFieldValue = (key: string, value: any) => {
-    setValues({ ...values, [key]: value });
+  const setFieldValue = (key: string, value: unknown) => {
+    setValues({ ...values, [key]: value } as TValues);
   };
 
   const isPinVisible = (key: string) => Boolean(pinVisible[key]);
@@ -92,12 +95,12 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
     setPinVisible((prev) => ({ ...prev, [key]: !prev[key] }));
 
   // Renders the correct input component based on the field's kind and type
-  const renderField = (
-    field: FullPageFormField<any>,
-    value: any,
-    setValue: (value: any) => void,
+  const renderField = <TItem,>(
+    field: FullPageFormField<TItem>,
+    value: unknown,
+    setValue: (value: unknown) => void,
     errorText?: string,
-    item?: any,
+    item?: TItem,
     itemIndex?: number,
   ) => {
     const colSpan = field.colSpan ?? 1;
@@ -127,7 +130,7 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
       >
         {field.kind === 'select' ? (
           <SelectField
-            value={value ?? ''}
+            value={(value as string) ?? ''}
             onChange={(nextValue) => setValue(nextValue)}
             options={field.options}
             placeholder={field.placeholder}
@@ -135,7 +138,7 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
         ) : field.kind === 'radio' ? (
           <RadioGroupField
             name={`${field.key}-${itemIndex ?? 'main'}`}
-            value={value}
+            value={value as string | number | boolean}
             onChange={(nextValue) => setValue(nextValue)}
             options={field.options}
           />
@@ -143,7 +146,7 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
           <TextLikeField
             as="textarea"
             rows={4}
-            value={value ?? ''}
+            value={(value as string | number) ?? ''}
             onChange={(nextValue) => setValue(nextValue)}
             placeholder={field.placeholder}
             adornment={field.adornment}
@@ -151,19 +154,23 @@ export default function FullPageForm<TValues extends Record<string, any>, TRepea
           />
         ) : field.type === 'pin' ? (
           <PinField
-            value={value ?? ''}
+            value={(value as string) ?? ''}
             onChange={(nextValue) => setValue(nextValue)}
             visible={isPinVisible(field.key)}
             onToggleVisible={() => togglePinVisible(field.key)}
             placeholder={field.placeholder}
           />
         ) : field.type === 'file' ? (
-          <FilePicker value={value} accept={field.accept} onChange={(file) => setValue(file)} />
+          <FilePicker
+            value={value as File | null}
+            accept={field.accept}
+            onChange={(file) => setValue(file)}
+          />
         ) : (
           <TextLikeField
             as="input"
             type={field.type ?? 'text'}
-            value={value ?? ''}
+            value={(value as string | number) ?? ''}
             onChange={(nextValue) => {
               if (field.type === 'number') {
                 setValue(nextValue === '' ? '' : Number(nextValue));

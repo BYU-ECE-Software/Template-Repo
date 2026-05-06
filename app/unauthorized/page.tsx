@@ -9,7 +9,7 @@ export default function Unauthorized() {
         {/* Big 403 */}
         <h1 className="text-byu-navy mb-0 text-center text-8xl font-black tracking-tight">403</h1>
         <p className="text-byu-navy mb-8 text-center text-lg">
-          You don't have permission to access this resource.
+          You don&apos;t have permission to access this resource.
         </p>
 
         {/* Badge reader device */}

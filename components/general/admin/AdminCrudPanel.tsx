@@ -24,13 +24,13 @@ import { useToast } from '@/hooks/useToast';
 
 export interface ConfigPanel<
   T extends { id: string },
-  CreatePayload extends Record<string, any> = Partial<T>,
+  CreatePayload extends Record<string, unknown> = Partial<T>,
 > {
   /** Singular noun for UI copy ("User", "Tag"). */
   noun: string;
 
   /** Columns shown in the list table. Edit/Delete/extra actions are appended automatically. */
-  columns: DataTableColumn[];
+  columns: DataTableColumn<T>[];
 
   /** Form fields for both create and edit. Drives FormModal. */
   fields: FormModalField[];
@@ -54,16 +54,16 @@ export interface ConfigPanel<
   canDelete?: (item: T) => boolean;
 }
 
-interface Props<T extends { id: string }, CreatePayload extends Record<string, any>> {
+interface Props<T extends { id: string }, CreatePayload extends Record<string, unknown>> {
   title: string;
   config: ConfigPanel<T, CreatePayload>;
   /** Extra row actions appended to the per-row menu (after Edit, before Delete). */
-  rowActions?: DataTableAction[];
+  rowActions?: DataTableAction<T>[];
 }
 
 export default function AdminCrudPanel<
   T extends { id: string },
-  CreatePayload extends Record<string, any>,
+  CreatePayload extends Record<string, unknown>,
 >({ title, config, rowActions = [] }: Props<T, CreatePayload>) {
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,12 +96,12 @@ export default function AdminCrudPanel<
 
   // Reload only when the underlying config object changes (parent swap).
   // The setLoading inside reload is the right pattern for fetch-on-key.
-  /* eslint-disable react-hooks/set-state-in-effect */
+   
   useEffect(() => {
     reload();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+   
 
   const openCreate = () => {
     setEditingId(null);
@@ -153,7 +153,7 @@ export default function AdminCrudPanel<
 
   // Append the actions column. DataTable shows the column header but renders
   // a "more" menu in each cell, so the header label can stay empty.
-  const columnsWithActions: DataTableColumn[] = [
+  const columnsWithActions: DataTableColumn<T>[] = [
     ...config.columns,
     {
       key: '__actions',
@@ -163,15 +163,15 @@ export default function AdminCrudPanel<
       actions: [
         {
           label: 'Edit',
-          onClick: (row: T) => openEdit(row),
-          hidden: (row: T) => config.canEdit?.(row) === false,
+          onClick: (row) => openEdit(row),
+          hidden: (row) => config.canEdit?.(row) === false,
         },
         ...rowActions,
         {
           label: 'Delete',
           variant: 'danger',
-          onClick: (row: T) => setPendingDelete(row),
-          hidden: (row: T) => config.canDelete?.(row) === false,
+          onClick: (row) => setPendingDelete(row),
+          hidden: (row) => config.canDelete?.(row) === false,
         },
       ],
     },
@@ -205,7 +205,7 @@ export default function AdminCrudPanel<
         saveLabel={editingId ? 'Save' : 'Add'}
         onClose={() => setFormOpen(false)}
         onSubmit={handleSubmit}
-        values={formValues as Record<string, any>}
+        values={formValues}
         setValues={(next) => setFormValues(next as CreatePayload)}
         fields={config.fields}
       />

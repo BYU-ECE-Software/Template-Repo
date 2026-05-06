@@ -14,7 +14,7 @@
 // All three are passed as query params from the frontend.
 // The API does the filtering, sorting, and slicing — the frontend just passes params and renders results.
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // Small helper to safely parse query params as integers with a fallback default

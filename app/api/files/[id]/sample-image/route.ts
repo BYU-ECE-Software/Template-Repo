@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { minioClient, SAMPLE_IMAGES_BUCKET } from '@/lib/minio/client';
-import { Readable } from 'node:stream';
+import type { Readable } from 'node:stream';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -58,10 +58,11 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
         Expires: '0',
       },
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error('Sample image GET from MinIO failed:', err);
+    const message = err instanceof Error ? err.message : 'Failed to fetch sample image from MinIO';
     return NextResponse.json(
-      { error: err?.message ?? 'Failed to fetch sample image from MinIO' },
+      { error: message },
       { status: 500 },
     );
   }

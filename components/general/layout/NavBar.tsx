@@ -88,7 +88,7 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
-  }, []);
+  }, [setMobileOpen]);
 
   // ******* There is code for the mobile view of the nav bar and the desktop view. If you had a tab to the nav bar, make sure you add it to both mobile and desktop ********
 

@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest} from 'next/server';
+import { NextResponse } from 'next/server';
 
 // Proxy runs on the server before any page loads — this is how we protect routes without a flash of content.
 // Next.js automatically picks up this file as long as it is named middleware.ts and sits at the project root.

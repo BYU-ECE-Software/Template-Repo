@@ -51,7 +51,7 @@ export default function CardDemoPage() {
             <div>
               <h2 className="text-byu-navy text-lg font-semibold">Text + Tag</h2>
               <p className="mt-0.5 text-sm text-gray-500">
-                Tags sit in the top right and don't affect the layout. Any tag variant works.
+                Tags sit in the top right and don&apos;t affect the layout. Any tag variant works.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

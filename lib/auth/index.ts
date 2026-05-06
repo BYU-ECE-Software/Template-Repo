@@ -34,7 +34,7 @@ export const auth = betterAuth({
       jwt: {
         expirationTime: 1 * 24 * 60 * 60, // 1 day
       },
-      generatePayload: async ({ user, session }: { user: ExtendedUser; session: Session }) => {
+      generatePayload: async ({ user, session: _session }: { user: ExtendedUser; session: Session }) => {
         // Call GRO here at token generation time
         // const adminFlags = await fetchGroAdminFlags(user.email);
 

@@ -57,6 +57,9 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 try again
               </button>
 
+              {/* Plain <a> is intentional — global-error replaces the root layout, so the
+                  Next.js Link/router context may not be available when this renders. */}
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a
                 href="/"
                 className="rounded-lg border border-gray-300 px-6 py-3 text-sm font-medium text-gray-600 transition hover:bg-gray-50"

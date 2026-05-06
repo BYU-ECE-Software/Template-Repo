@@ -9,7 +9,7 @@ import { FiBell, FiShoppingCart, FiMail, FiMessageSquare, FiUser } from 'react-i
 export default function CountBadgeDemoPage() {
   const [notifCount, setNotifCount] = useState(3);
   const [cartCount, setCartCount] = useState(12);
-  const [messageCount, setMessageCount] = useState(99);
+  const messageCount = 99;
 
   return (
     <>

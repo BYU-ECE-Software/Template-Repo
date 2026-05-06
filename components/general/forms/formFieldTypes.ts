@@ -60,21 +60,22 @@ export type ComboboxField = BaseField & {
   items: ComboboxItem[];
 };
 
-// Custom fields let you render anything inside the form grid
-export type CustomField<TItem = any> = {
+// Custom fields let you render anything inside the form grid.
+// Custom renderers narrow `value` themselves — they own the field's value shape.
+export type CustomField<TItem = unknown> = {
   kind: 'custom';
   key: string;
   colSpan?: 1 | 2;
   render: (args?: {
-    value?: any;
-    setValue?: (value: any) => void;
+    value?: unknown;
+    setValue?: (value: unknown) => void;
     item?: TItem;
     itemIndex?: number;
   }) => ReactNode;
 };
 
 // Union of all supported field types — used by FormModal and FullPageForm
-export type SharedFormField<TItem = any> =
+export type SharedFormField<TItem = unknown> =
   | InputField
   | SelectField
   | RadioField
