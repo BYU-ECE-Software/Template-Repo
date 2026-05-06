@@ -24,7 +24,7 @@ import { FiBook, FiEdit2, FiShield, FiTrash2, FiZap } from 'react-icons/fi';
 import ConfirmModal from '@/components/general/overlays/ConfirmModal';
 import { useToast } from '@/hooks/useToast';
 import FormModal from '@/components/general/forms/FormModal';
-import { useRole } from '../providers/TestingRoleProvider';
+import { useRole } from '@/components/dev/TestingRoleProvider';
 import { getUsers, type User } from '@/lib/api/users';
 
 export default function DataTableDemo() {

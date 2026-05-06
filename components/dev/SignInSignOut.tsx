@@ -1,12 +1,14 @@
-// Component for signing in/signing out buttons in the top right of the screen
-// In early dev stages, this button does nothing. But it can be hooked up to BYU sign in later
-// TestingAuthProvider controls the "authentication status" which affects which version of the button is displayed
+// Component for signing in/signing out buttons in the top right of the
+// screen. In early dev stages, this button does nothing. But it can be
+// hooked up to BYU sign in later. TestingAuthProvider controls the
+// "authentication status" which affects which version of the button is
+// displayed.
 
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
-import { useAuth } from '@/app/providers/TestingAuthProvider';
+import { useAuth } from '@/components/dev/TestingAuthProvider';
 
 type SignInProps = {
   className?: string;

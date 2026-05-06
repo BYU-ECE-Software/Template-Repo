@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { minioClient, SAMPLE_IMAGES_BUCKET } from '@/lib/minioClient';
+import { minioClient, SAMPLE_IMAGES_BUCKET } from '@/lib/minio/client';
 import { Readable } from 'node:stream';
 
 export const runtime = 'nodejs';

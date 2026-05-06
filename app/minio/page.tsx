@@ -6,7 +6,7 @@
 // Step 3 — retrieve files from the db and display them by calling the GET route which fetches from MinIO on demand
 // Step 4 — update a file row (uploads new file to MinIO, saves new key, deletes old object from MinIO)
 // Step 5 — delete a file row (removes from db and deletes the object from MinIO)
-// See lib/api/uploadedFiles.ts for the api calls and app/api/minio/sample-images/route.ts for the routes
+// See lib/minio/uploadedFiles.ts for the api calls and app/api/minio/sample-images/route.ts for the routes
 
 import { useState, useEffect } from 'react';
 import PageTitle from '@/components/general/layout/PageTitle';
@@ -22,7 +22,7 @@ import {
   getFiles,
   updateFile,
   deleteFile,
-} from '@/lib/api/uploadedFiles';
+} from '@/lib/minio/uploadedFiles';
 import { FiExternalLink, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import IconButton from '@/components/general/actions/IconButton';
 

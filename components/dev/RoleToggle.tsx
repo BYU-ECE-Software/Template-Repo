@@ -1,9 +1,10 @@
 // Good for early development when auth hasn't been set up.
-// This toggle can be placed in the header to simulate an authenticated environment and set up what components and pages are restricted
+// This toggle can be placed in the header to simulate an authenticated
+// environment and set up what components and pages are restricted.
 
 'use client';
 
-import { useRole } from '@/app/providers/TestingRoleProvider';
+import { useRole } from '@/components/dev/TestingRoleProvider';
 import ToggleSwitch from '@/components/general/actions/ToggleSwitch';
 
 type RoleToggleProps = {

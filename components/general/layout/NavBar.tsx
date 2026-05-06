@@ -3,8 +3,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { FiChevronDown } from 'react-icons/fi';
-import SignInSignOut from '../auth/SignInSignOut';
-import { useRole } from '@/app/providers/TestingRoleProvider';
+import SignInSignOut from '@/components/dev/SignInSignOut';
+import { useRole } from '@/components/dev/TestingRoleProvider';
 
 type NavBarProps = {
   navPadLeft?: number;

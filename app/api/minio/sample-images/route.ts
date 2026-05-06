@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { minioClient, SAMPLE_IMAGES_BUCKET } from '@/lib/minioClient';
+import { minioClient, SAMPLE_IMAGES_BUCKET } from '@/lib/minio/client';
 import { randomUUID } from 'crypto';
 
 export const runtime = 'nodejs';

@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { authClient } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth/client';
 
 export default function HomeClient() {
   const handleSignIn = async () => {

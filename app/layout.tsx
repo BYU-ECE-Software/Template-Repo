@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import Header from '../components/general/layout/Header';
 import Footer from '../components/general/layout/Footer';
-import Providers from './providers';
+import Providers from '@/components/dev/Providers';
 
 export const metadata: Metadata = {
   title: 'ECE Template Repo',

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import NavBar from './NavBar';
-import SignInSignOut from '../auth/SignInSignOut';
-import RoleToggle from '../auth/RoleToggle';
+import SignInSignOut from '@/components/dev/SignInSignOut';
+import RoleToggle from '@/components/dev/RoleToggle';
 
 const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
