@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import type { ReactElement } from 'react';
+import { createPortal } from 'react-dom';
 import Toast from '@/components/general/feedback/Toast';
 import type { ToastProps, ToastType } from '@/components/general/feedback/Toast';
 
@@ -74,19 +75,30 @@ export function useToast({ position = 'bottom-right' }: UseToastOptions = {}): U
     [dismiss],
   );
 
+  // Portal to document.body so the toast container always anchors to the
+  // viewport. Without the portal, a `position: fixed` element will anchor
+  // to its nearest *positioned-or-transformed* ancestor — and any ancestor
+  // with `transform`, `filter`, `contain`, `perspective`, `will-change`,
+  // `backdrop-filter`, etc. silently turns into the containing block.
+  // Same trap that BaseModal / RowActionMenu / Combobox dodge by portaling.
   const ToastContainer = useCallback(
-    () => (
-      <div
-        aria-live="polite"
-        className={`fixed z-50 flex flex-col gap-3 w-80 pointer-events-none ${POSITION_CLASSES[position]}`}
-      >
-        {toasts.map((t) => (
-          <div key={t.id} className="pointer-events-auto">
-            <Toast {...t} />
-          </div>
-        ))}
-      </div>
-    ),
+    () => {
+      const tree = (
+        <div
+          aria-live="polite"
+          className={`fixed z-[60] flex flex-col gap-3 w-80 pointer-events-none ${POSITION_CLASSES[position]}`}
+        >
+          {toasts.map((t) => (
+            <div key={t.id} className="pointer-events-auto">
+              <Toast {...t} />
+            </div>
+          ))}
+        </div>
+      );
+      return typeof document !== 'undefined'
+        ? createPortal(tree, document.body)
+        : tree;
+    },
     [toasts, position],
   );
 

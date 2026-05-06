@@ -70,6 +70,8 @@ type DataTableProps = {
   sortKey?: string;
   sortDir?: 'asc' | 'desc';
   onSort?: (key: string, dir: 'asc' | 'desc') => void;
+  /** Click anywhere on a row to trigger this. Action cells stop propagation so the menu still works. */
+  onRowClick?: (row: any) => void;
 };
 
 // Renders the inner table that appears when a row is expanded
@@ -158,6 +160,7 @@ export default function DataTable({
   sortKey = '',
   sortDir = 'asc',
   onSort,
+  onRowClick,
 }: DataTableProps) {
   // Tracks which rows are currently expanded
   const [expandedRows, setExpandedRows] = useState<Set<React.Key>>(new Set());
@@ -252,9 +255,10 @@ export default function DataTable({
                   <React.Fragment key={key}>
                     <tr
                       key={key}
+                      onClick={onRowClick ? () => onRowClick(row) : undefined}
                       className={`hover:bg-byu-royal/10 transition-colors ${
                         isExpanded ? 'bg-byu-royal/5' : ''
-                      }`}
+                      } ${onRowClick ? 'cursor-pointer' : ''}`}
                     >
                       {/* Expand toggle — only shown on rows where isExpandable returns true */}
                       {expandableRows && (
@@ -280,6 +284,7 @@ export default function DataTable({
                       {columns.map((col) => (
                         <td
                           key={col.key}
+                          onClick={col.actions ? (e) => e.stopPropagation() : undefined}
                           className={`px-6 py-3 align-middle text-gray-700 ${
                             col.noWrap ? 'whitespace-nowrap' : 'wrap-break-word whitespace-normal'
                           } ${col.cellClassName || ''}`}

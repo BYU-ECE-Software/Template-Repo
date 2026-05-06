@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { ReactNode, KeyboardEvent } from 'react';
 import Button from '../actions/Button';
 
@@ -15,6 +17,8 @@ type BaseModalProps = {
   onClose: () => void;
   onSubmit?: () => void;
   children: ReactNode;
+  /** Optional content rendered between the header and the scrollable body. */
+  topBar?: ReactNode;
   footer?: ReactNode;
 };
 
@@ -28,8 +32,21 @@ export default function BaseModal({
   onClose,
   onSubmit,
   children,
+  topBar,
   footer,
 }: BaseModalProps) {
+  // Scroll lock + scrollbar-shift compensation while modal is open
+  useEffect(() => {
+    if (!open) return;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [open]);
+
   // Do not render anything when modal is closed
   if (!open) return null;
 
@@ -56,7 +73,10 @@ export default function BaseModal({
   // Use a wrapper so disabled buttons can still show a tooltip
   const Wrapper = submitDisabled ? 'span' : 'div';
 
-  return (
+  // Footer area only renders when caller provides a footer OR a submit handler
+  const showFooter = footer !== undefined || onSubmit !== undefined;
+
+  const overlay = (
     <div
       className="fixed inset-0 z-50"
       onKeyDown={handleKeyDown}
@@ -76,7 +96,7 @@ export default function BaseModal({
             sizeClass,
             // leave a buffer so it never hits the viewport edges
             'max-h-[calc(100vh-3rem)]', // 3rem buffer (top+bottom)
-            // layout to pin header/footer and scroll body
+            // layout to pin header/topBar/footer and scroll body
             'flex flex-col',
           ].join(' ')}
           onClick={(e) => e.stopPropagation()}
@@ -112,39 +132,59 @@ export default function BaseModal({
             </button>
           </div>
 
-          {/* Body (scrolls) + Footer (fixed) */}
+          {/* Top bar (fixed) — optional slot for tab bars / stepper indicators */}
+          {topBar !== undefined && <div className="shrink-0">{topBar}</div>}
+
+          {/* Body (scrolls) + Footer (fixed if present) */}
           <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
             {/* Scroll region */}
             <div className="min-h-0 space-y-4 overflow-y-auto px-5 py-4">{children}</div>
 
-            {/* Divider + footer pinned to bottom */}
-            <div className="h-px shrink-0 bg-gray-200" />
+            {showFooter && (
+              <>
+                {/* Divider + footer pinned to bottom */}
+                <div className="h-px shrink-0 bg-gray-200" />
 
-            <div className="shrink-0 px-5 py-4">
-              {footer ? (
-                footer
-              ) : (
-                <div className="flex justify-end gap-2">
-                  <Button type="button" variant="secondary" onClick={onClose} label="Cancel" />
+                <div className="shrink-0 px-5 py-4">
+                  {footer ? (
+                    footer
+                  ) : (
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={onClose}
+                        label="Cancel"
+                      />
 
-                  <Wrapper
-                    title={submitDisabled ? 'All required fields must be filled.' : undefined}
-                  >
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      disabled={saving || submitDisabled}
-                      loading={saving}
-                      loadingLabel="Saving…"
-                      label={saveLabel}
-                    />
-                  </Wrapper>
+                      <Wrapper
+                        title={
+                          submitDisabled ? 'All required fields must be filled.' : undefined
+                        }
+                      >
+                        <Button
+                          type="submit"
+                          variant="primary"
+                          disabled={saving || submitDisabled}
+                          loading={saving}
+                          loadingLabel="Saving…"
+                          label={saveLabel}
+                        />
+                      </Wrapper>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </form>
         </div>
       </div>
     </div>
   );
+
+  // Render through document.body so the overlay can never be clipped by an
+  // ancestor's containing block or out-stacked by an ancestor's z-index.
+  return typeof document !== 'undefined'
+    ? createPortal(overlay, document.body)
+    : null;
 }

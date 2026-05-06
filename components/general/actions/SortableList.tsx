@@ -29,7 +29,6 @@ import { FiMenu } from 'react-icons/fi';
 
 export type SortableItem = {
   id: UniqueIdentifier;
-  [key: string]: unknown;
 };
 
 export type SortableListDirection = 'vertical' | 'horizontal' | 'grid';

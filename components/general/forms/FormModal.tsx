@@ -8,7 +8,11 @@ import SelectField from '@/components/general/forms/SelectField';
 import RadioGroupField from '@/components/general/forms/RadioGroupField';
 import TextLikeField from '@/components/general/forms/TextLikeField';
 import PinField from '@/components/general/forms/PinField';
+import CheckboxField from '@/components/general/forms/CheckboxField';
+import Combobox from '@/components/general/forms/Combobox';
 import type {
+  CheckboxField as CheckboxFieldType,
+  ComboboxField as ComboboxFieldType,
   CustomField,
   InputField,
   RadioField,
@@ -18,7 +22,13 @@ import type {
 // Modal sizing options passed straight through to BaseModal
 type ModalSize = 'sm' | 'md' | 'lg';
 
-export type FormModalField = InputField | SelectFieldType | RadioField | CustomField;
+export type FormModalField =
+  | InputField
+  | SelectFieldType
+  | RadioField
+  | CheckboxFieldType
+  | ComboboxFieldType
+  | CustomField;
 
 // Props for the FormModal component
 type FormModalProps<T extends Record<string, any>> = {
@@ -113,6 +123,22 @@ export default function FormModal<T extends Record<string, any>>({
                   value={value}
                   onChange={(nextValue) => setFieldValue(field.key, nextValue)}
                   options={field.options}
+                />
+              ) : field.kind === 'checkbox' ? (
+                <CheckboxField
+                  checked={Boolean(value)}
+                  onChange={(nextValue) => setFieldValue(field.key, nextValue)}
+                />
+              ) : field.kind === 'combobox' ? (
+                <Combobox
+                  items={field.items}
+                  value={
+                    value && typeof value === 'object' && 'id' in value
+                      ? value
+                      : { id: '', name: '' }
+                  }
+                  onChange={(nextValue) => setFieldValue(field.key, nextValue)}
+                  placeholder={field.placeholder}
                 />
               ) : field.type === 'textarea' ? (
                 <TextLikeField

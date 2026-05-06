@@ -16,6 +16,11 @@ export type RadioOption = {
   value: string | number | boolean; // supports Yes/No booleans, numeric codes, or string values
 };
 
+export type ComboboxItem = {
+  id: string;
+  name: string;
+};
+
 // All field types share these base properties
 export type BaseField = {
   key: string; // must match the key in your form values object
@@ -46,6 +51,15 @@ export type RadioField = BaseField & {
   options: RadioOption[];
 };
 
+export type CheckboxField = BaseField & {
+  kind: 'checkbox';
+};
+
+export type ComboboxField = BaseField & {
+  kind: 'combobox';
+  items: ComboboxItem[];
+};
+
 // Custom fields let you render anything inside the form grid
 export type CustomField<TItem = any> = {
   kind: 'custom';
@@ -64,4 +78,6 @@ export type SharedFormField<TItem = any> =
   | InputField
   | SelectField
   | RadioField
+  | CheckboxField
+  | ComboboxField
   | CustomField<TItem>;
