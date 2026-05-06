@@ -26,7 +26,14 @@ const SAMPLE_EVENTS: CalendarEvent[] = [
     speakers: ['Dr. Jane Smith'],
     location: 'Main Hall',
   },
-  { id: 'e3', dayIndex: 0, title: 'Coffee Break', start: '11:00', end: '11:30', variant: 'Break' },
+  {
+    id: 'e3',
+    dayIndex: 0,
+    title: 'Dirty Soda Break',
+    start: '11:00',
+    end: '11:30',
+    variant: 'Break',
+  },
   {
     id: 'e4',
     dayIndex: 0,
@@ -58,7 +65,14 @@ const SAMPLE_EVENTS: CalendarEvent[] = [
     variant: 'Long Tutorial',
     speakers: ['Dr. Jane Smith'],
   },
-  { id: 'e9', dayIndex: 1, title: 'Coffee Break', start: '11:00', end: '11:30', variant: 'Break' },
+  {
+    id: 'e9',
+    dayIndex: 1,
+    title: 'Dirty Soda Break',
+    start: '11:00',
+    end: '11:30',
+    variant: 'Break',
+  },
   {
     id: 'e10',
     dayIndex: 1,

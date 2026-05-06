@@ -1,8 +1,8 @@
-name: template-repo
+name: template_repo
 
 services:
   app:
-    image: ghcr.io/byu-ece-software/template-repo-dev:latest
+    image: ghcr.io/byu-ece-software/template-repo-dev:${IMAGE_TAG:-latest}
     container_name: template_repo_app
     env_file:
       - .env
@@ -15,7 +15,7 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
     networks:
-      - template_repo_network
+      - network
       - proxy
     labels:
       - traefik.enable=true
@@ -26,7 +26,7 @@ services:
       - traefik.http.services.template-repo-api.loadbalancer.server.port=3000
 
   nginx:
-    image: ghcr.io/byu-ece-software/template-repo-dev-nginx:latest
+    image: ghcr.io/byu-ece-software/template-repo-dev-nginx:${IMAGE_TAG:-latest}
     container_name: template_repo_nginx
     depends_on:
       app:
@@ -35,7 +35,7 @@ services:
     expose:
       - "80"
     networks:
-      - template_repo_network
+      - network
       - proxy
     labels:
       - traefik.enable=true
@@ -68,7 +68,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - template_repo_network
+      - network
 
   minio:
     image: minio/minio
@@ -84,8 +84,9 @@ services:
       - minio_data:/data
     command: server /data --console-address ":9001"
     networks:
-      - template_repo_network
+      - network
 
+  # See docker-compose.migrate.yml for in depth explanations about createbuckets and what to change
   createbuckets:
     image: minio/mc
     depends_on:
@@ -100,23 +101,15 @@ services:
         echo 'Waiting for MinIO...';
         sleep 2;
       done;
-      /usr/bin/mc mb --ignore-existing myminio/item-images;
-      echo 'Bucket ensured: item-images';
-      /usr/bin/mc mb --ignore-existing myminio/item-datasheets;
-      echo 'Bucket ensured: item-datasheets';
-      /usr/bin/mc mb --ignore-existing myminio/project-3dprint;
-      echo 'Bucket ensured: project-3dprint';
-      /usr/bin/mc mb --ignore-existing myminio/project-pcbmill;
-      echo 'Bucket ensured: project-pcbmill';
-      /usr/bin/mc mb --ignore-existing myminio/project-lasercut;
-      echo 'Bucket ensured: project-lasercut';
+      /usr/bin/mc mb --ignore-existing myminio/sample-images;
+      echo 'Bucket ensured: sample-images';
       exit 0;
       "
     networks:
-      - template_repo_network
+      - network
 
   migrate:
-    image: ghcr.io/byu-ece-software/template-repo-dev-migrator:latest
+    image: ghcr.io/byu-ece-software/template-repo-dev-migrator:${IMAGE_TAG:-latest}
     command: npx prisma migrate deploy
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -125,10 +118,10 @@ services:
       db:
         condition: service_healthy
     networks:
-      - template_repo_network
+      - network
 
 networks:
-  template_repo_network:
+  network:
     driver: bridge
   proxy:
     external: true

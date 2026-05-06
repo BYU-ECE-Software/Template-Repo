@@ -234,6 +234,39 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                   >
                     Buttons
                   </Link>
+
+                  <Link
+                    href="/countBadge"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Count Badge
+                  </Link>
+
+                  <Link
+                    href="/card"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Cards
+                  </Link>
+
+                  <Link
+                    href="/dnd"
+                    onClick={() => {
+                      setComponentsOpen(false);
+                      setMobileOpen(false);
+                    }}
+                    className="text-byu-navy px-10 py-2 text-left hover:bg-[#FAFAFA]"
+                  >
+                    Drag, Drop, Sort
+                  </Link>
                 </div>
               )}
             </div>
@@ -303,6 +336,14 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                 </div>
               )}
             </div>
+
+            <Link
+              href="/minio"
+              onClick={() => setMobileOpen(false)}
+              className="px-6 py-4 text-left hover:bg-[#FAFAFA]"
+            >
+              MinIO
+            </Link>
           </nav>
 
           <div className="border-t border-gray-200">
@@ -368,81 +409,105 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
                 </Link>
 
                 <Link
-                    href="/calendarHeatmap"
-                    onClick={() => {
-                      setComponentsOpen(false);
-                    }}
-                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
-                  >
-                    Calendar Heatmap
-                  </Link>
+                  href="/calendarHeatmap"
+                  onClick={() => {
+                    setComponentsOpen(false);
+                  }}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Calendar Heatmap
+                </Link>
 
-                  <Link
-                    href="/calendar"
-                    onClick={() => {
-                      setComponentsOpen(false);
-                    }}
-                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
-                  >
-                    Calendar
-                  </Link>
+                <Link
+                  href="/calendar"
+                  onClick={() => {
+                    setComponentsOpen(false);
+                  }}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Calendar
+                </Link>
 
-                  <Link
-                    href="/accordion"
-                    onClick={() => {
-                      setComponentsOpen(false);
-                    }}
-                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
-                  >
-                    Accordion
-                  </Link>
+                <Link
+                  href="/accordion"
+                  onClick={() => {
+                    setComponentsOpen(false);
+                  }}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Accordion
+                </Link>
 
-                  <Link
-                    href="/pageHero"
-                    onClick={() => {
-                      setComponentsOpen(false);
-                    }}
-                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
-                  >
-                    Page Hero
-                  </Link>
+                <Link
+                  href="/pageHero"
+                  onClick={() => {
+                    setComponentsOpen(false);
+                  }}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Page Hero
+                </Link>
 
-                  <Link
-                    href="/personPictureBioCard"
-                    onClick={() => {
-                      setComponentsOpen(false);
-                    }}
-                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
-                  >
-                    Person Picture Bio Card
-                  </Link>
+                <Link
+                  href="/personPictureBioCard"
+                  onClick={() => {
+                    setComponentsOpen(false);
+                  }}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Person Picture Bio Card
+                </Link>
 
-                  <Link
-                    href="/tag"
-                    onClick={() => {
-                      setComponentsOpen(false);
-                    }}
-                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
-                  >
-                    Tags
-                  </Link>
+                <Link
+                  href="/tag"
+                  onClick={() => {
+                    setComponentsOpen(false);
+                  }}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Tags
+                </Link>
 
-                  <Link
-                    href="/toasts"
-                    onClick={() => {
-                      setComponentsOpen(false);
-                    }}
-                    className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
-                  >
-                    Toasts
-                  </Link>
-                
+                <Link
+                  href="/toasts"
+                  onClick={() => {
+                    setComponentsOpen(false);
+                  }}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Toasts
+                </Link>
+
                 <Link
                   href="/buttons"
                   onClick={() => setComponentsOpen(false)}
                   className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
                 >
                   Buttons
+                </Link>
+
+                <Link
+                  href="/countBadge"
+                  onClick={() => setComponentsOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Count Badge
+                </Link>
+
+                <Link
+                  href="/card"
+                  onClick={() => setComponentsOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Cards
+                </Link>
+
+                <Link
+                  href="/dnd"
+                  onClick={() => setComponentsOpen(false)}
+                  className="text-byu-navy block w-full px-6 py-3 text-left hover:bg-gray-50"
+                >
+                  Drag, Drop, Sort
                 </Link>
               </div>
             )}
@@ -503,6 +568,13 @@ const NavBar = ({ navPadLeft = 128, mobileOpen, setMobileOpen }: NavBarProps) =>
               </div>
             )}
           </div>
+
+          <Link
+            href="/minio"
+            className="nav-link-hover px-8 py-4 whitespace-nowrap hover:bg-[#FAFAFA]"
+          >
+            MinIO
+          </Link>
         </div>
       </nav>
 

@@ -77,6 +77,34 @@ export default function Home() {
       tag: 'reactive',
       tagColor: 'bg-blue-100 text-blue-700 border-blue-200',
     },
+    {
+      href: '/buttons',
+      title: 'Buttons',
+      desc: 'You know what a button is',
+      tag: 'actions',
+      tagColor: 'bg-rose-100 text-rose-700 border-rose-200',
+    },
+    {
+      href: '/countBadge',
+      title: 'Count Badge',
+      desc: 'Show count from wherever the data lives',
+      tag: 'feedback',
+      tagColor: 'bg-orange-100 text-orange-700 border-orange-200',
+    },
+    {
+      href: '/card',
+      title: 'Cards',
+      desc: 'A flexible display card that supports text, images, and actions in multiple layouts.',
+      tag: 'data',
+      tagColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    },
+    {
+      href: '/dnd',
+      title: 'Draggables, Droppables, Sortables',
+      desc: 'Oh my!',
+      tag: 'reactive',
+      tagColor: 'bg-blue-100 text-blue-700 border-blue-200',
+    },
   ];
 
   const SPECIAL_PAGES = [

@@ -49,6 +49,8 @@ jobs:
           push: true
           build-args: |
             DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
+            MINIO_ROOT_USER=dummy
+            MINIO_ROOT_PASSWORD=dummy
           tags: |
             ghcr.io/byu-ece-software/template-repo-dev:latest
             ghcr.io/byu-ece-software/template-repo-dev:${{ steps.meta.outputs.sha_tag }}
@@ -112,7 +114,7 @@ jobs:
 
             git pull origin dev
 
-            IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
+            export IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}"
 
             # 1. Pull new images
             echo "Pulling images (tag: $IMAGE_TAG)..."
@@ -122,8 +124,15 @@ jobs:
             echo "Starting database..."
             docker compose -f docker-compose.test.yaml up -d db
             echo "Waiting for database to be ready..."
+            RETRIES=30
             until docker compose -f docker-compose.test.yaml exec -T db pg_isready > /dev/null 2>&1; do
-              echo "  ...waiting"
+              RETRIES=$((RETRIES - 1))
+              if [ $RETRIES -le 0 ]; then
+                echo "Database failed to become ready in time!"
+                docker compose -f docker-compose.test.yaml logs db
+                exit 1
+              fi
+              echo "  ...waiting ($RETRIES retries left)"
               sleep 2
             done
             echo "Database is ready."

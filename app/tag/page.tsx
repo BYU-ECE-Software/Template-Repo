@@ -4,6 +4,7 @@ import { useState } from 'react';
 import PageTitle from '@/components/general/layout/PageTitle';
 import Tag from '@/components/general/data-display/Tag';
 import type { TagVariant, TagSize } from '@/components/general/data-display/Tag';
+import { statusToBadgeClasses } from '@/utils/statusBadge';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -137,6 +138,67 @@ export default function FeedbackShowcasePage() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* statusToBadgeClasses utility */}
+          <div className="space-y-4 rounded-xl border bg-white p-6 shadow-md">
+            <div>
+              <h2 className="text-byu-navy text-lg font-semibold">Auto-coloring from DB strings</h2>
+              <p className="mt-0.5 text-sm text-gray-500">
+                When your status comes straight from the database as a raw string and you don&apos;t
+                know the value ahead of time, use the{' '}
+                <code className="rounded bg-gray-100 px-1 py-0.5 text-xs">
+                  statusToBadgeClasses
+                </code>{' '}
+                utility instead of the Tag component. It maps common keywords to badge colors
+                automatically.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {[
+                'Active',
+                'Inactive',
+                'Pending',
+                'Cancelled',
+                'Complete',
+                'Overdue',
+                'Maintenance',
+                'Unknown',
+              ].map((s) => (
+                <span
+                  key={s}
+                  className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusToBadgeClasses(s)}`}
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+
+            <div className="rounded-lg bg-gray-50 p-4 text-xs leading-relaxed text-gray-800">
+              <p className="mb-2 text-[10px] font-semibold tracking-wide text-gray-500 uppercase">
+                When to use which:
+              </p>
+              <p className="mb-1">
+                <span className="font-semibold">Tag component</span> — you control the value and
+                pick the variant explicitly.
+              </p>
+              <p>
+                <span className="font-semibold">statusToBadgeClasses</span> — value comes from the
+                API/DB as a raw string and you need auto-mapping.
+              </p>
+            </div>
+
+            <pre className="overflow-x-auto rounded-lg bg-gray-50 p-4 text-xs leading-relaxed text-gray-800">
+              {`import { statusToBadgeClasses } from '@/utils/statusBadge';
+
+// In a data table render function:
+render: (row) => (
+  <span className={\`rounded-full px-2 py-1 text-xs font-medium \${statusToBadgeClasses(row.status)}\`}>
+    {row.status}
+  </span>
+)`}
+            </pre>
           </div>
 
           {/* Tag usage snippet */}
